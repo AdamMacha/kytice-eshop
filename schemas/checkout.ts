@@ -55,22 +55,13 @@ export const checkoutFormSchema = z
 
     // Required consents
     ageVerified: z.literal(true, {
-      errorMap: () => ({
-        message:
-          "Musíte potvrdit, že vám je 18 let",
-      }),
+      message: "Musíte potvrdit, že vám je 18 let",
     }),
     termsAccepted: z.literal(true, {
-      errorMap: () => ({
-        message:
-          "Musíte souhlasit s obchodními podmínkami",
-      }),
+      message: "Musíte souhlasit s obchodními podmínkami",
     }),
     privacyAccepted: z.literal(true, {
-      errorMap: () => ({
-        message:
-          "Musíte souhlasit se zpracováním osobních údajů",
-      }),
+      message: "Musíte souhlasit se zpracováním osobních údajů",
     }),
 
     // Optional
