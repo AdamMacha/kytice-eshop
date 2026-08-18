@@ -1,0 +1,144 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Orders ────────────────────────────────────────────────────────
+
+model Order {
+  id              String        @id @default(cuid())
+  orderNumber     String        @unique
+  status          OrderStatus   @default(PENDING)
+
+  // Customer info (guest checkout only)
+  email           String
+  phone           String
+  firstName       String
+  lastName        String
+
+  // Billing address (required for Czech law)
+  billingStreet   String
+  billingCity     String
+  billingZip      String
+  billingCountry  String        @default("CZ")
+
+  // Shipping
+  shippingMethod  ShippingMethod
+
+  // For Packeta pickup point
+  packetaPointId   String?
+  packetaPointName String?
+
+  // For address delivery (Packeta or Prague)
+  shippingStreet  String?
+  shippingCity    String?
+  shippingZip     String?
+
+  // Pricing (all stored in haléře = CZK cents)
+  subtotal        Int
+  shippingPrice   Int
+  codFee          Int           @default(0)
+  totalPrice      Int
+
+  // Payment
+  paymentMethod   PaymentMethod
+  paymentStatus   PaymentStatus @default(PENDING)
+  stripePaymentId String?       @unique
+
+  // Packeta tracking
+  packetaPacketId String?       @unique
+  packetaBarcode  String?
+  trackingUrl     String?
+
+  // Age verification (must be true — legal requirement)
+  ageVerified     Boolean       @default(false)
+
+  // Customer note / customization request
+  note            String?
+
+  // Timestamps
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  paidAt          DateTime?
+  shippedAt       DateTime?
+  deliveredAt     DateTime?
+  cancelledAt     DateTime?
+
+  // Relations
+  items           OrderItem[]
+  statusHistory   OrderStatusLog[]
+
+  @@index([email])
+  @@index([orderNumber])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productSlug String
+  productName String
+  quantity    Int
+  unitPrice   Int
+  totalPrice  Int
+
+  createdAt   DateTime @default(now())
+
+  @@index([orderId])
+}
+
+model OrderStatusLog {
+  id        String       @id @default(cuid())
+  orderId   String
+  order     Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  fromStatus OrderStatus?
+  toStatus   OrderStatus
+  note       String?
+  source     String       @default("system")
+
+  createdAt  DateTime     @default(now())
+
+  @@index([orderId])
+}
+
+// ─── Enums ─────────────────────────────────────────────────────────
+
+enum OrderStatus {
+  PENDING
+  AWAITING_PAYMENT
+  PAID
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum ShippingMethod {
+  PRAGUE_DELIVERY
+  PACKETA_PICKUP
+  PACKETA_ADDRESS
+}
+
+enum PaymentMethod {
+  STRIPE_CARD
+  COD
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  PAID
+  FAILED
+  REFUNDED
+  COD_PENDING
+  COD_COLLECTED
+}
