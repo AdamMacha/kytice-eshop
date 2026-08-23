@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { products, getProductBySlug } from "@/data/products";
+import { db } from "@/lib/db";
 import { formatCZKFromWhole } from "@/lib/format";
 import { ROUTES } from "@/lib/constants";
 import { ProductDetailClient } from "./product-detail-client";
@@ -15,6 +15,7 @@ interface ProductPageProps {
 }
 
 export async function generateStaticParams() {
+  const products = await db.product.findMany({ select: { slug: true } });
   return products.map((product) => ({
     slug: product.slug,
   }));
@@ -24,7 +25,7 @@ export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await db.product.findUnique({ where: { slug } });
 
   if (!product) {
     return { title: "Produkt nenalezen" };
@@ -43,13 +44,14 @@ export async function generateMetadata({
 
 export default async function ProductDetailPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await db.product.findUnique({ where: { slug } });
 
   if (!product) {
     notFound();
   }
 
-  const relatedProducts = products
+  const allProducts = await db.product.findMany({ where: { inStock: true } });
+  const relatedProducts = allProducts
     .filter((p) => p.slug !== product.slug)
     .slice(0, 3);
 

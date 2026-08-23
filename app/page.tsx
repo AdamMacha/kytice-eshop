@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { products } from "@/data/products";
+import { db } from "@/lib/db";
 import { ProductGrid } from "@/components/product/product-grid";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/lib/constants";
@@ -16,7 +16,11 @@ import {
   Star,
 } from "lucide-react";
 
-export default function Home() {
+export default async function Home() {
+  const products = await db.product.findMany({
+    where: { inStock: true },
+    orderBy: { createdAt: "asc" },
+  });
   return (
     <div className="space-y-24 sm:space-y-32 pb-24">
       {/* ─── Hero Section ────────────────────────────────────────── */}

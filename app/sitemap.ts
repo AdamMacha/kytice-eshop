@@ -1,8 +1,10 @@
 import type { MetadataRoute } from "next";
-import { products } from "@/data/products";
+import { db } from "@/lib/db";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://moodboxbloom.cz";
+
+  const products = await db.product.findMany({ select: { slug: true } });
 
   const productUrls = products.map((product) => ({
     url: `${baseUrl}/produkty/${product.slug}`,

@@ -1,6 +1,6 @@
 import React from "react";
 import type { Metadata } from "next";
-import { products } from "@/data/products";
+import { db } from "@/lib/db";
 import { ProductGrid } from "@/components/product/product-grid";
 import { Wine, Sparkles } from "lucide-react";
 
@@ -10,7 +10,11 @@ export const metadata: Metadata = {
     "Prohlédněte si naši nabídku ručně tvořených sladkých kytic s prémiovými čokoládami a alkoholem.",
 };
 
-export default function ProductsPage() {
+export default async function ProductsPage() {
+  const products = await db.product.findMany({
+    where: { inStock: true },
+    orderBy: { createdAt: "asc" },
+  });
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12">
       {/* Header */}
