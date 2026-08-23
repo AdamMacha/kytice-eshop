@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 
 const ADMIN_COOKIE_NAME = "moodbox_admin_token";
-const DEFAULT_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "moodbox2026";
+const DEFAULT_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const ADMIN_SECRET_TOKEN =
   process.env.ADMIN_SECRET_TOKEN || "moodbox_bloom_secret_admin_session_token_2026";
 

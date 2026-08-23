@@ -70,10 +70,6 @@ export default async function AdminLoginPage({
             Vstoupit do administrace
           </Button>
         </form>
-
-        <p className="text-[11px] text-[#A4948B]">
-          Výchozí testovací heslo: <code className="bg-[#F3E7DF] px-1.5 py-0.5 rounded font-mono">moodbox2026</code>
-        </p>
       </div>
     </div>
   );
