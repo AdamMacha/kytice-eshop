@@ -147,7 +147,15 @@ export function Footer() {
 
         {/* Bottom copyright */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#A4948B] gap-4">
-          <p>© {new Date().getFullYear()} MoodBox Bloom. Všechna práva vyhrazena.</p>
+          <div className="flex items-center gap-4">
+            <p>© {new Date().getFullYear()} MoodBox Bloom. Všechna práva vyhrazena.</p>
+            <Link
+              href="/admin"
+              className="text-[11px] text-[#A4948B] hover:text-[#C88D9A] transition"
+            >
+              Administrace
+            </Link>
+          </div>
           <p className="flex items-center gap-1">
             Vytvořeno s <Heart className="w-3.5 h-3.5 text-[#C88D9A] fill-current" /> pro jedinečné momenty
           </p>

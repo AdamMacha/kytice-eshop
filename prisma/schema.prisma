@@ -109,6 +109,40 @@ model OrderStatusLog {
   @@index([orderId])
 }
 
+// ─── Products & Settings (Managed via Admin) ────────────────────────
+
+model Product {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  name            String
+  subtitle        String
+  description     String
+  price           Int      // in CZK (e.g. 999)
+  priceHalere     Int      // in haléře (e.g. 99900)
+  image           String
+  containsAlcohol Boolean  @default(true)
+  alcoholDetails  String
+  color           String   @default("#C88D9A")
+  inStock         Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model StoreSetting {
+  id                  String   @id @default("default")
+  storeName           String   @default("MoodBox Bloom")
+  phone               String   @default("776 208 814")
+  email               String   @default("moodboxcz@gmail.cz")
+  address             String   @default("Hlavní 28, Průhonice 25243")
+  ico                 String   @default("23965878")
+  pragueShippingPrice Int      @default(0)
+  packetaPickupPrice  Int      @default(89)
+  packetaAddressPrice Int      @default(129)
+  codFee              Int      @default(30)
+  announcement        String?  @default("Doprava zdarma po Praze | Ručně tvořené sladké kytice s alkoholem")
+  updatedAt           DateTime @updatedAt
+}
+
 // ─── Enums ─────────────────────────────────────────────────────────
 
 enum OrderStatus {
