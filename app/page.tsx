@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { formatCZKFromWhole } from "@/lib/format";
 import { ProductGrid } from "@/components/product/product-grid";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/lib/constants";
@@ -21,6 +22,10 @@ export default async function Home() {
     where: { inStock: true },
     orderBy: { createdAt: "asc" },
   });
+  
+  const pinkEdition = products.find((p) => p.slug === "pink-edition");
+  const heroPriceDisplay = pinkEdition ? formatCZKFromWhole(pinkEdition.price) : "999 Kč";
+
   return (
     <div className="space-y-24 sm:space-y-32 pb-24">
       {/* ─── Hero Section ────────────────────────────────────────── */}
@@ -120,7 +125,7 @@ export default async function Home() {
                       </p>
                     </div>
                     <span className="font-bold text-base text-[#C88D9A]">
-                      999 Kč
+                      {heroPriceDisplay}
                     </span>
                   </div>
                 </div>
