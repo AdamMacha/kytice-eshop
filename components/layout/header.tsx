@@ -51,7 +51,7 @@ export function Header() {
             {/* Logo */}
             <div className="flex-1 md:flex-none flex justify-center md:justify-start">
               <Link href={ROUTES.home} className="flex items-center gap-3 group">
-                <div className="relative w-10 h-10 transition-transform group-hover:scale-105">
+                <div className="relative w-14 h-14 transition-transform group-hover:scale-105">
                   <Image
                     src="/logo.png"
                     alt="MoodBox Bloom Logo"
