@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Product } from "@/types/product";
 import { formatCZKFromWhole } from "@/lib/format";
 import { useCart } from "@/hooks/use-cart";
-import { ROUTES } from "@/lib/constants";
+import { ROUTES, BRAND } from "@/lib/constants";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,7 +14,6 @@ import {
   Wine,
   Truck,
   Sparkles,
-  ShieldCheck,
   ChevronDown,
   Plus,
   Minus,
@@ -249,7 +248,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
               <p>
                 Stačí uvést vaše přání do poznámky v pokladně nebo nás kontaktovat
                 na emailu{" "}
-                <strong className="text-[#4A3A31]">moodboxcz@gmail.cz</strong>.
+                <strong className="text-[#4A3A31]">{BRAND.email}</strong>.
               </p>
             </div>
           )}

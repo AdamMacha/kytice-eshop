@@ -4,12 +4,14 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { contactFormSchema, type ContactFormData } from "@/schemas/contact";
+import { submitContactMessage } from "@/actions/contact";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Check, Send } from "lucide-react";
+import { Check, Send, AlertCircle } from "lucide-react";
 
 export function ContactForm() {
   const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -23,11 +25,17 @@ export function ContactForm() {
 
   const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true);
-    // Simulate sending email / contact form action
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    setErrorMessage(null);
+
+    const result = await submitContactMessage(data);
     setIsSubmitting(false);
-    setIsSuccess(true);
-    reset();
+
+    if (result.success) {
+      setIsSuccess(true);
+      reset();
+    } else {
+      setErrorMessage(result.error || "Zprávu se nepodařilo odeslat. Zkuste to prosím znovu.");
+    }
   };
 
   return (
@@ -45,6 +53,13 @@ export function ContactForm() {
           <span>
             Děkujeme za vaši zprávu! Ozveme se vám co nejdříve na zadaný email.
           </span>
+        </div>
+      )}
+
+      {errorMessage && (
+        <div className="p-4 rounded-2xl bg-red-50 border border-red-200 flex items-center gap-3 text-red-700 text-xs animate-fade-in">
+          <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
+          <span>{errorMessage}</span>
         </div>
       )}
 

@@ -49,7 +49,7 @@ export function SettingsFormClient({ settings }: { settings: any }) {
             label="Email obchodu"
             name="email"
             type="email"
-            defaultValue={settings.email || "moodboxcz@gmail.cz"}
+            defaultValue={settings.email || "moodboxcz@gmail.com"}
             required
           />
         </div>

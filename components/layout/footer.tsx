@@ -1,10 +1,18 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { BRAND, ROUTES } from "@/lib/constants";
 import { Heart, ShieldAlert, Phone, Mail, MapPin } from "lucide-react";
 
 export function Footer() {
+  const pathname = usePathname();
+
+  if (pathname && pathname.startsWith("/admin")) {
+    return null;
+  }
   return (
     <footer className="bg-[#4A3A31] text-[#F3E7DF] pt-16 pb-12 border-t border-[#D4AF7F]/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -147,15 +155,7 @@ export function Footer() {
 
         {/* Bottom copyright */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#A4948B] gap-4">
-          <div className="flex items-center gap-4">
-            <p>© {new Date().getFullYear()} MoodBox Bloom. Všechna práva vyhrazena.</p>
-            <Link
-              href="/admin"
-              className="text-[11px] text-[#A4948B] hover:text-[#C88D9A] transition"
-            >
-              Administrace
-            </Link>
-          </div>
+          <p>© {new Date().getFullYear()} MoodBox Bloom. Všechna práva vyhrazena.</p>
           <p className="flex items-center gap-1">
             Vytvořeno s <Heart className="w-3.5 h-3.5 text-[#C88D9A] fill-current" /> pro jedinečné momenty
           </p>

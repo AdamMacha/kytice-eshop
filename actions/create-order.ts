@@ -8,6 +8,7 @@ import { db } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
 import { sendEmail } from "@/lib/email";
 import { formatCZK } from "@/lib/format";
+import { BRAND } from "@/lib/constants";
 
 export interface CreateOrderResult {
   success: boolean;
@@ -15,6 +16,7 @@ export interface CreateOrderResult {
   orderNumber?: string;
   clientSecret?: string;
   isCod?: boolean;
+  totalPriceHalere?: number;
   error?: string;
 }
 
@@ -33,7 +35,19 @@ export async function createOrder(
       };
     }
 
-    // 3. Server-side price calculation (never trust client amounts)
+    // 3. Server-side price calculation (fetch active prices from DB, fallback to static)
+    const slugs = validatedData.items.map((i) => i.productSlug);
+    let dbProducts: Array<{ slug: string; name: string; priceHalere: number; inStock: boolean }> = [];
+    try {
+      dbProducts = await db.product.findMany({
+        where: { slug: { in: slugs } },
+        select: { slug: true, name: true, priceHalere: true, inStock: true },
+      });
+    } catch (dbReadErr) {
+      console.warn("[createOrder] Could not read products from DB, falling back to static:", dbReadErr);
+    }
+    const dbProductMap = new Map(dbProducts.map((p) => [p.slug, p]));
+
     let subtotalHalere = 0;
     const validatedItems: Array<{
       productSlug: string;
@@ -44,11 +58,21 @@ export async function createOrder(
     }> = [];
 
     for (const item of validatedData.items) {
-      const product = getProductBySlug(item.productSlug);
+      const dbProd = dbProductMap.get(item.productSlug);
+      const staticProd = getProductBySlug(item.productSlug);
+      const product = dbProd || staticProd;
+
       if (!product) {
         return {
           success: false,
           error: `Produkt "${item.productSlug}" nebyl nalezen v nabídce.`,
+        };
+      }
+
+      if (dbProd && !dbProd.inStock) {
+        return {
+          success: false,
+          error: `Produkt "${dbProd.name}" je momentálně vyprodán.`,
         };
       }
 
@@ -83,8 +107,8 @@ export async function createOrder(
 
     const orderNumber = generateOrderNumber();
 
-    // 6. Database save with Prisma (with fallback for local dev when DB is unconfigured)
-    let createdOrderId = `MB-${Date.now().toString()}`;
+    // 6. Database save with Prisma
+    let createdOrderId: string;
 
     try {
       const order = await db.order.create({
@@ -133,11 +157,11 @@ export async function createOrder(
       });
       createdOrderId = order.id;
     } catch (dbError) {
-      console.warn(
-        "[Prisma DB] Database write skipped (check DATABASE_URL in .env):",
-        dbError
-      );
-      // Still proceed for seamless local testing
+      console.error("[Prisma DB] Database write failed:", dbError);
+      return {
+        success: false,
+        error: "Objednávku se nepodařilo uložit do databáze. Zkontrolujte prosím připojení a zkuste to znovu.",
+      };
     }
 
     // 7. Stripe PaymentIntent for Card Payments
@@ -162,48 +186,91 @@ export async function createOrder(
           orderId: createdOrderId,
           orderNumber,
           clientSecret: paymentIntent.client_secret || undefined,
+          totalPriceHalere,
           isCod: false,
         };
       } catch (stripeError: any) {
-        console.warn(
-          "[Stripe] PaymentIntent creation skipped (check STRIPE_SECRET_KEY):",
+        console.error(
+          "[Stripe] PaymentIntent creation error:",
           stripeError?.message
         );
-        // Return mock client secret for local testing
         return {
-          success: true,
-          orderId: createdOrderId,
-          orderNumber,
-          clientSecret: `mock_pi_${Date.now()}_secret_${Date.now()}`,
-          isCod: false,
+          success: false,
+          error: `Chyba při přípravě platby kartou: ${stripeError?.message || "Zkuste to prosím znovu."}`,
         };
       }
     }
 
-    // 8. COD Orders — Send confirmation email & return success
+    // 8. COD Orders — Send confirmation email & notify admin
+    const itemsHtml = validatedItems
+      .map(
+        (it) =>
+          `<tr><td style="padding: 6px 0;">${it.quantity}× ${it.productName}</td><td style="padding: 6px 0; text-align: right; font-weight: bold;">${formatCZK(it.totalPrice)}</td></tr>`
+      )
+      .join("");
+
+    // Customer email
     try {
       await sendEmail({
         to: validatedData.email,
         subject: `Potvrzení objednávky ${orderNumber} | MoodBox Bloom`,
         html: `
-          <div style="font-family: sans-serif; color: #4A3A31; max-width: 600px; margin: 0 auto;">
-            <h1 style="color: #C88D9A;">Děkujeme za vaši objednávku!</h1>
-            <p>Vaše objednávka <strong>${orderNumber}</strong> byla úspěšně přijata.</p>
-            <p><strong>Způsob platby:</strong> Dobírka při převzetí (+30 Kč)</p>
-            <p><strong>Celková částka k úhradě:</strong> ${formatCZK(totalPriceHalere)}</p>
-            <hr style="border: 1px solid #E8D9CE; margin: 20px 0;" />
-            <p style="font-size: 12px; color: #7D6B62;">Při převzetí zásilky může dopravce vyžadovat ověření věku 18 let.</p>
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #4A3A31; max-width: 600px; margin: 0 auto; background: #ffffff; padding: 24px; border: 1px solid #E8D9CE; border-radius: 16px;">
+            <h1 style="color: #C88D9A; margin-top: 0; font-size: 24px;">Děkujeme za vaši objednávku!</h1>
+            <p>Vaše objednávka č. <strong>${orderNumber}</strong> byla úspěšně přijata a brzy se pustíme do ruční výroby.</p>
+            
+            <table style="width: 100%; border-collapse: collapse; margin: 20px 0; border-top: 1px solid #E8D9CE; border-bottom: 1px solid #E8D9CE; font-size: 14px;">
+              ${itemsHtml}
+              <tr><td style="padding: 6px 0; color: #7D6B62;">Doprava (${shippingMethod.name}):</td><td style="padding: 6px 0; text-align: right;">${shippingPriceHalere === 0 ? "Zdarma" : formatCZK(shippingPriceHalere)}</td></tr>
+              <tr><td style="padding: 6px 0; color: #7D6B62;">Dobírka:</td><td style="padding: 6px 0; text-align: right;">${formatCZK(codFeeHalere)}</td></tr>
+              <tr style="font-size: 16px; font-weight: bold;"><td style="padding: 10px 0; color: #C88D9A;">Celkem k úhradě:</td><td style="padding: 10px 0; text-align: right; color: #C88D9A;">${formatCZK(totalPriceHalere)}</td></tr>
+            </table>
+
+            <p style="font-size: 13px; margin: 4px 0;"><strong>Způsob platby:</strong> Dobírka při převzetí</p>
+            <p style="font-size: 13px; margin: 4px 0;"><strong>Doručovací adresa:</strong> ${validatedData.firstName} ${validatedData.lastName}, ${validatedData.shippingStreet || validatedData.billingStreet}, ${validatedData.shippingCity || validatedData.billingCity} ${validatedData.shippingZip || validatedData.billingZip}</p>
+            ${validatedData.packetaPointName ? `<p style="font-size: 13px; margin: 4px 0;"><strong>Výdejní místo:</strong> ${validatedData.packetaPointName}</p>` : ""}
+            ${validatedData.note ? `<p style="font-size: 13px; margin: 4px 0; background: #FDFBF7; padding: 10px; border-radius: 8px;"><strong>Poznámka:</strong> ${validatedData.note}</p>` : ""}
+
+            <hr style="border: none; border-top: 1px solid #E8D9CE; margin: 24px 0 16px 0;" />
+            <p style="font-size: 11px; color: #7D6B62; margin: 0;">Produkty obsahují alkohol. Při převzetí zásilky může dopravce vyžadovat prokázání věku 18 let (OP).</p>
+            <p style="font-size: 11px; color: #A4948B; margin: 6px 0 0 0;">MoodBox Bloom – Kateřina Janovská, Hlavní 28, Průhonice | Tel: ${BRAND.phoneFormatted}</p>
           </div>
         `,
       });
     } catch (emailErr) {
-      console.warn("[Email] Confirmation email warning:", emailErr);
+      console.warn("[Email] Customer confirmation email warning:", emailErr);
+    }
+
+    // Admin notification email to Kateřina
+    try {
+      await sendEmail({
+        to: BRAND.email,
+        subject: `🌸 Nová objednávka ${orderNumber} (${formatCZK(totalPriceHalere)} - Dobírka)`,
+        html: `
+          <div style="font-family: sans-serif; color: #4A3A31; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #C88D9A;">Přijata nová objednávka ${orderNumber}</h2>
+            <p><strong>Zákazník:</strong> ${validatedData.firstName} ${validatedData.lastName} (<a href="mailto:${validatedData.email}">${validatedData.email}</a>, tel: <a href="tel:${validatedData.phone}">${validatedData.phone}</a>)</p>
+            <p><strong>Způsob platby:</strong> Dobírka (+30 Kč)</p>
+            <p><strong>Doprava:</strong> ${shippingMethod.name} ${validatedData.packetaPointName ? `(${validatedData.packetaPointName})` : ""}</p>
+            <p><strong>Adresa:</strong> ${validatedData.shippingStreet || validatedData.billingStreet}, ${validatedData.shippingCity || validatedData.billingCity} ${validatedData.shippingZip || validatedData.billingZip}</p>
+            ${validatedData.note ? `<p style="background: #FFF4E5; padding: 10px; border-radius: 8px;"><strong>Přání / Poznámka zákazníka:</strong> ${validatedData.note}</p>` : ""}
+            <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+              ${itemsHtml}
+              <tr style="font-weight: bold;"><td style="padding: 8px 0;">Celkem:</td><td style="text-align: right;">${formatCZK(totalPriceHalere)}</td></tr>
+            </table>
+            <p><a href="${process.env.NEXT_PUBLIC_APP_URL || "https://moodboxbloom.cz"}/admin/objednavky/${createdOrderId}" style="display: inline-block; background: #C88D9A; color: white; padding: 10px 18px; text-decoration: none; border-radius: 8px; font-weight: bold;">Otevřít objednávku v administraci →</a></p>
+          </div>
+        `,
+      });
+    } catch (adminEmailErr) {
+      console.warn("[Email] Admin notification warning:", adminEmailErr);
     }
 
     return {
       success: true,
       orderId: createdOrderId,
       orderNumber,
+      totalPriceHalere,
       isCod: true,
     };
   } catch (error: any) {

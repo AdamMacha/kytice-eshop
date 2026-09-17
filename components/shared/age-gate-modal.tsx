@@ -14,10 +14,10 @@ export function AgeGateModal() {
     try {
       const verified = localStorage.getItem(AGE_VERIFIED_KEY);
       if (!verified) {
-        setIsOpen(true);
+        queueMicrotask(() => setIsOpen(true));
       }
     } catch {
-      setIsOpen(true);
+      queueMicrotask(() => setIsOpen(true));
     }
   }, []);
 

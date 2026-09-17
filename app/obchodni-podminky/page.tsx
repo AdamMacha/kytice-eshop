@@ -204,10 +204,43 @@ export default function TermsPage() {
           </div>
         </section>
 
-        {/* 9. Závěrečná ustanovení */}
+        {/* 9. Mimosoudní řešení sporů (ADR / ČOI) */}
         <section className="space-y-2 pt-2 border-t border-[#F0E4DC]">
           <h2 className="font-serif text-lg font-bold text-[#4A3A31]">
-            9. Závěrečná ustanovení
+            9. Mimosoudní řešení spotřebitelských sporů
+          </h2>
+          <p className="text-xs text-[#7D6B62]">
+            K mimosoudnímu řešení spotřebitelských sporů z kupní smlouvy je
+            příslušná <strong>Česká obchodní inspekce</strong>, se sídlem
+            Štěpánská 567/15, 120 00 Praha 2, IČO: 000 20 869, internetová
+            adresa:{" "}
+            <a
+              href="https://adr.coi.cz"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#C88D9A] underline hover:text-[#B67886]"
+            >
+              https://adr.coi.cz
+            </a>
+            . Platformu pro řešení sporů on-line nacházející se na internetové
+            adrese{" "}
+            <a
+              href="http://ec.europa.eu/consumers/odr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#C88D9A] underline hover:text-[#B67886]"
+            >
+              http://ec.europa.eu/consumers/odr
+            </a>{" "}
+            je možné využít při řešení sporů mezi prodávajícím a kupujícím z kupní
+            smlouvy.
+          </p>
+        </section>
+
+        {/* 10. Závěrečná ustanovení */}
+        <section className="space-y-2 pt-2 border-t border-[#F0E4DC]">
+          <h2 className="font-serif text-lg font-bold text-[#4A3A31]">
+            10. Závěrečná ustanovení
           </h2>
           <p className="text-xs text-[#7D6B62]">
             Vztahy neupravené těmito obchodními podmínkami se řídí platným právním

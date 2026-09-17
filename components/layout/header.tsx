@@ -3,15 +3,21 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useCart } from "@/hooks/use-cart";
 import { ShoppingBag, Menu, X, Sparkles } from "lucide-react";
 import { ROUTES } from "@/lib/constants";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 
 export function Header() {
+  const pathname = usePathname();
   const { totalItems } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
+
+  if (pathname && pathname.startsWith("/admin")) {
+    return null;
+  }
 
   const navLinks = [
     { href: ROUTES.products, label: "Kytice" },

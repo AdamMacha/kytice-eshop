@@ -7,7 +7,7 @@ export const BRAND = {
   owner: "Kateřina Janovská",
   ico: "23965878",
   address: "Hlavní 28, Průhonice 25243",
-  email: "moodboxcz@gmail.cz",
+  email: "moodboxcz@gmail.com",
   phone: "776 208 814",
   phoneFormatted: "+420 776 208 814",
 } as const;

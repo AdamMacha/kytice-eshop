@@ -18,13 +18,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     try {
       const savedCart = localStorage.getItem(CART_STORAGE_KEY);
       if (savedCart) {
-        setItems(JSON.parse(savedCart));
+        const parsed = JSON.parse(savedCart);
+        queueMicrotask(() => {
+          setItems(parsed);
+          setIsInitialized(true);
+        });
+        return;
       }
     } catch (err) {
       console.error("[Cart] Error reading localStorage:", err);
-    } finally {
-      setIsInitialized(true);
     }
+    queueMicrotask(() => {
+      setIsInitialized(true);
+    });
   }, []);
 
   // Save cart to localStorage on change

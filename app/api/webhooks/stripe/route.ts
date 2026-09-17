@@ -3,6 +3,7 @@ import { stripe } from "@/lib/stripe";
 import { db } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
 import { formatCZK } from "@/lib/format";
+import { BRAND } from "@/lib/constants";
 import Stripe from "stripe";
 
 export async function POST(request: Request) {
@@ -71,6 +72,25 @@ export async function POST(request: Request) {
                 </div>
               `,
             });
+          }
+
+          // Send admin notification to Kateřina
+          try {
+            await sendEmail({
+              to: BRAND.email,
+              subject: `💳 Zaplaceno: Objednávka ${orderNumber || orderId} (${formatCZK(paymentIntent.amount)} - Karta)`,
+              html: `
+                <div style="font-family: sans-serif; color: #4A3A31; max-width: 600px; margin: 0 auto;">
+                  <h2 style="color: #C88D9A;">Platba kartou přijata!</h2>
+                  <p>Objednávka č. <strong>${orderNumber || orderId}</strong> byla úspěšně uhrazena přes Stripe.</p>
+                  <p><strong>Částka:</strong> ${formatCZK(paymentIntent.amount)}</p>
+                  <p><strong>Zákazník:</strong> ${paymentIntent.metadata?.customerName || "N/A"} (${paymentIntent.receipt_email || ""})</p>
+                  <p style="margin-top: 20px;"><a href="${process.env.NEXT_PUBLIC_APP_URL || "https://moodboxbloom.cz"}/admin/objednavky/${orderId}" style="display: inline-block; background: #C88D9A; color: white; padding: 10px 18px; text-decoration: none; border-radius: 8px; font-weight: bold;">Zobrazit objednávku v administraci →</a></p>
+                </div>
+              `,
+            });
+          } catch (adminErr) {
+            console.warn("[Stripe Webhook] Admin notification email warning:", adminErr);
           }
         } catch (dbErr) {
           console.error("[Stripe Webhook DB Error]:", dbErr);

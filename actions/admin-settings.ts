@@ -12,7 +12,7 @@ export async function updateStoreSettingsAction(formData: FormData) {
 
   try {
     const phone = (formData.get("phone") as string) || "776 208 814";
-    const email = (formData.get("email") as string) || "moodboxcz@gmail.cz";
+    const email = (formData.get("email") as string) || "moodboxcz@gmail.com";
     const address = (formData.get("address") as string) || "Hlavní 28, Průhonice 25243";
     const announcement = (formData.get("announcement") as string) || "";
     const packetaPickupPrice = parseInt((formData.get("packetaPickupPrice") as string) || "89", 10);

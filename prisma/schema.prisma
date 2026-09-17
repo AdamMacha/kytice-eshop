@@ -132,7 +132,7 @@ model StoreSetting {
   id                  String   @id @default("default")
   storeName           String   @default("MoodBox Bloom")
   phone               String   @default("776 208 814")
-  email               String   @default("moodboxcz@gmail.cz")
+  email               String   @default("moodboxcz@gmail.com")
   address             String   @default("Hlavní 28, Průhonice 25243")
   ico                 String   @default("23965878")
   pragueShippingPrice Int      @default(0)

@@ -4,21 +4,32 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { formatCZKFromWhole } from "@/lib/format";
 import { ROUTES } from "@/lib/constants";
 import { ProductDetailClient } from "./product-detail-client";
 import { ProductCard } from "@/components/product/product-card";
-import { ChevronRight, ArrowLeft } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
-  const products = await db.product.findMany({ select: { slug: true } });
-  return products.map((product) => ({
-    slug: product.slug,
-  }));
+  try {
+    const products = await db.product.findMany({ select: { slug: true } });
+    if (products.length > 0) {
+      return products.map((product) => ({ slug: product.slug }));
+    }
+  } catch (err) {
+    console.warn("[generateStaticParams] Falling back to static slugs:", err);
+  }
+
+  return [
+    { slug: "pink-edition" },
+    { slug: "red-passion" },
+    { slug: "blue-dream" },
+    { slug: "magic-bloom" },
+    { slug: "golden-elegance" },
+  ];
 }
 
 export async function generateMetadata({

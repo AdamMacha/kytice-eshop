@@ -2,10 +2,9 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/hooks/use-cart";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { checkoutFormSchema, type CheckoutFormData } from "@/schemas/checkout";
 import { shippingMethods, COD_FEE, COD_FEE_HALERE } from "@/data/shipping";
@@ -19,15 +18,10 @@ import { PacketaWidget } from "@/components/checkout/packeta-widget";
 import { StripePayment } from "@/components/checkout/stripe-payment";
 import {
   ShieldAlert,
-  Truck,
-  CreditCard,
-  Banknote,
   Lock,
   ArrowRight,
-  Sparkles,
-  MapPin,
   CheckCircle,
-  FileText,
+  ShieldCheck,
 } from "lucide-react";
 
 export default function CheckoutPage() {
@@ -40,6 +34,7 @@ export default function CheckoutPage() {
     clientSecret: string;
     orderId: string;
     orderNumber: string;
+    totalPriceHalere?: number;
   } | null>(null);
 
   const {
@@ -47,7 +42,6 @@ export default function CheckoutPage() {
     handleSubmit,
     watch,
     setValue,
-    control,
     formState: { errors },
   } = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutFormSchema),
@@ -128,8 +122,8 @@ export default function CheckoutPage() {
           clientSecret: result.clientSecret,
           orderId: result.orderId,
           orderNumber: result.orderNumber,
+          totalPriceHalere: result.totalPriceHalere || grandTotalHalere,
         });
-        clearCart();
         setIsSubmitting(false);
       }
     } catch (err: any) {
@@ -152,23 +146,122 @@ export default function CheckoutPage() {
 
       {stripeData ? (
         /* Stripe Payment Step */
-        <div className="max-w-xl mx-auto space-y-6">
-          <div className="text-center space-y-2">
-            <h2 className="font-serif text-2xl font-bold text-[#4A3A31]">
-              Platba kartou online
-            </h2>
-            <p className="text-xs text-[#7D6B62]">
-              Objednávka č. <strong>{stripeData.orderNumber}</strong> byla
-              vytvořena. Nyní zadejte platební údaje karty.
-            </p>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 animate-fade-in">
+          {/* Left Col: Payment Card & Instructions */}
+          <div className="lg:col-span-7 space-y-6">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xs uppercase tracking-widest text-[#A87938] font-bold">
+                  Krok 2 ze 2
+                </span>
+                <span className="text-xs text-[#A4948B]">•</span>
+                <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1">
+                  <CheckCircle className="w-3.5 h-3.5" />
+                  Objednávka č. {stripeData.orderNumber}
+                </span>
+              </div>
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#4A3A31]">
+                Zabezpečená platba kartou
+              </h2>
+              <p className="text-xs sm:text-sm text-[#7D6B62]">
+                Vaše objednávka byla úspěšně zaevidována. Pro její dokončení a zahájení ruční vazby kytice zadejte platební údaje karty níže.
+              </p>
+            </div>
+
+            <StripePayment
+              clientSecret={stripeData.clientSecret}
+              orderId={stripeData.orderId}
+              orderNumber={stripeData.orderNumber}
+              totalDisplay={formatCZK(stripeData.totalPriceHalere || grandTotalHalere)}
+              onCancel={() => setStripeData(null)}
+            />
           </div>
 
-          <StripePayment
-            clientSecret={stripeData.clientSecret}
-            orderId={stripeData.orderId}
-            orderNumber={stripeData.orderNumber}
-            totalDisplay={formatCZK(grandTotalHalere)}
-          />
+          {/* Right Col: Order Summary & Reassurance */}
+          <div className="lg:col-span-5">
+            <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#E8D9CE] shadow-sm space-y-6 sticky top-28">
+              <div className="flex items-center justify-between pb-3 border-b border-[#F0E4DC]">
+                <h3 className="font-serif text-xl font-bold text-[#4A3A31]">
+                  Rekapitulace objednávky
+                </h3>
+                <span className="text-xs font-mono font-bold text-[#A87938]">
+                  #{stripeData.orderNumber}
+                </span>
+              </div>
+
+              {/* Items preview */}
+              <div className="space-y-3 max-h-64 overflow-y-auto pr-1">
+                {items.map((item) => (
+                  <div
+                    key={item.product.slug}
+                    className="flex items-center justify-between text-xs text-[#4A3A31] gap-3 p-2.5 rounded-xl bg-[#FDFBF7] border border-[#F0E4DC]"
+                  >
+                    <div className="flex items-center gap-2.5 truncate">
+                      <div className="w-6 h-6 rounded-full bg-[#F9ECEF] text-[#C88D9A] flex items-center justify-center font-bold text-[11px] shrink-0">
+                        {item.quantity}×
+                      </div>
+                      <span className="truncate font-medium">{item.product.name}</span>
+                    </div>
+                    <span className="font-bold whitespace-nowrap text-[#4A3A31]">
+                      {formatCZK(item.product.priceHalere * item.quantity)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Calculation breakdown */}
+              <div className="space-y-2.5 pt-4 border-t border-[#F0E4DC] text-xs text-[#7D6B62]">
+                <div className="flex justify-between">
+                  <span>Mezisoučet položek:</span>
+                  <span className="font-semibold text-[#4A3A31]">
+                    {formatCZK(subtotalHalere)}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Doprava ({currentShippingMethod?.name || "Zvolená doprava"}):</span>
+                  <span className="font-semibold text-[#4A3A31]">
+                    {shippingPriceHalere === 0
+                      ? "Zdarma"
+                      : formatCZK(shippingPriceHalere)}
+                  </span>
+                </div>
+
+                <div className="pt-4 border-t-2 border-[#F0E4DC] flex justify-between items-baseline">
+                  <div>
+                    <span className="font-serif font-bold text-base text-[#4A3A31] block">
+                      Celkem k úhradě:
+                    </span>
+                    <span className="text-[10px] text-[#A4948B] block">
+                      Včetně DPH a dopravy
+                    </span>
+                  </div>
+                  <span className="text-2xl sm:text-3xl font-bold text-[#C88D9A]">
+                    {formatCZK(stripeData.totalPriceHalere || grandTotalHalere)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Trust Badges */}
+              <div className="p-4 rounded-2xl bg-[#FFF9F6] border border-[#EBC3CC] space-y-2 text-xs text-[#7D6B62]">
+                <div className="flex items-center gap-2 text-[#4A3A31] font-bold">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  <span>Garance bezpečného nákupu</span>
+                </div>
+                <p className="text-[11px] leading-relaxed">
+                  Platba probíhá šifrovaným spojením přímo přes platební bránu Stripe. Údaje o kartě jsou chráněny 256-bit SSL šifrováním a 3D Secure ověřením.
+                </p>
+              </div>
+
+              {/* Back to details button */}
+              <button
+                type="button"
+                onClick={() => setStripeData(null)}
+                className="w-full text-center text-xs text-[#7D6B62] hover:text-[#4A3A31] py-2 transition hover:underline cursor-pointer"
+              >
+                ← Upravit doručovací adresu nebo způsob dopravy
+              </button>
+            </div>
+          </div>
         </div>
       ) : (
         /* Main Checkout Form */

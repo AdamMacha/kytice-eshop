@@ -9,7 +9,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { Button } from "@/components/ui/button";
-import { Lock, CreditCard, Check } from "lucide-react";
+import { Lock, CreditCard, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/lib/constants";
 
@@ -21,10 +21,12 @@ function PaymentFormInternal({
   orderId,
   orderNumber,
   totalDisplay,
+  onCancel,
 }: {
   orderId: string;
   orderNumber: string;
   totalDisplay: string;
+  onCancel?: () => void;
 }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -67,10 +69,35 @@ function PaymentFormInternal({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
-      <div className="p-5 bg-white rounded-2xl border border-[#E8D9CE] shadow-xs space-y-4">
-        <div className="flex items-center gap-2 text-xs font-bold text-[#4A3A31]">
-          <CreditCard className="w-4 h-4 text-[#C88D9A]" />
-          <span>Platební údaje karty</span>
+      {/* Prominent Price & Order Summary Card */}
+      <div className="p-5 sm:p-6 bg-gradient-to-br from-[#FFF9F6] to-[#F9ECEF] rounded-2xl border border-[#EBC3CC] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="space-y-1">
+          <span className="text-[11px] font-bold uppercase tracking-widest text-[#A87938] block">
+            Konečná částka k úhradě
+          </span>
+          <span className="text-xs text-[#7D6B62] block">
+            Objednávka č. <strong className="text-[#4A3A31] font-mono tracking-wide">{orderNumber}</strong>
+          </span>
+        </div>
+        <div className="text-left sm:text-right border-t sm:border-t-0 pt-2 sm:pt-0 border-[#EBC3CC]/50">
+          <span className="font-serif text-3xl sm:text-4xl font-bold text-[#C88D9A] block leading-none">
+            {totalDisplay}
+          </span>
+          <span className="text-[11px] text-[#7D6B62] mt-1 block">
+            Včetně DPH a dopravy
+          </span>
+        </div>
+      </div>
+
+      <div className="p-6 bg-white rounded-2xl border border-[#E8D9CE] shadow-xs space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-[#F0E4DC]">
+          <div className="flex items-center gap-2 text-xs font-bold text-[#4A3A31]">
+            <CreditCard className="w-4 h-4 text-[#C88D9A]" />
+            <span>Platební údaje karty</span>
+          </div>
+          <span className="text-[11px] text-[#7D6B62]">
+            Konečná cena: <strong className="text-[#C88D9A]">{totalDisplay}</strong>
+          </span>
         </div>
 
         {stripePromise ? (
@@ -85,7 +112,7 @@ function PaymentFormInternal({
               Integrovaná platební brána Stripe (Testovací režim)
             </p>
             <p className="text-[11px] text-[#7D6B62]">
-              Kliknutím na tlačítko níže simulujete úspěšnou platbu kartou.
+              Kliknutím na tlačítko níže simulujete úspěšnou platbu kartou ve výši <strong>{totalDisplay}</strong>.
             </p>
           </div>
         )}
@@ -100,11 +127,26 @@ function PaymentFormInternal({
         variant="gold"
         size="lg"
         isLoading={isProcessing}
-        className="w-full font-bold shadow-lg"
+        className="w-full font-bold shadow-lg text-base py-4"
       >
         <Lock className="w-4 h-4 mr-2" />
         Zaplatit {totalDisplay} kartou
       </Button>
+
+      {onCancel && (
+        <button
+          type="button"
+          onClick={onCancel}
+          className="w-full text-center text-xs text-[#7D6B62] hover:text-[#4A3A31] py-1 transition hover:underline cursor-pointer"
+        >
+          ← Zpět k úpravě doručovacích údajů
+        </button>
+      )}
+
+      <div className="flex items-center justify-center gap-1.5 text-[11px] text-[#7D6B62]">
+        <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+        <span>Bezpečná platba přes Stripe • 256-bit SSL šifrování</span>
+      </div>
     </form>
   );
 }
@@ -114,6 +156,7 @@ interface StripePaymentProps {
   orderId: string;
   orderNumber: string;
   totalDisplay: string;
+  onCancel?: () => void;
 }
 
 export function StripePayment({
@@ -121,6 +164,7 @@ export function StripePayment({
   orderId,
   orderNumber,
   totalDisplay,
+  onCancel,
 }: StripePaymentProps) {
   // If no Stripe publishable key is set, render the form in test mode
   if (!stripePromise || !clientSecret.startsWith("pi_")) {
@@ -129,6 +173,7 @@ export function StripePayment({
         orderId={orderId}
         orderNumber={orderNumber}
         totalDisplay={totalDisplay}
+        onCancel={onCancel}
       />
     );
   }
@@ -156,6 +201,7 @@ export function StripePayment({
         orderId={orderId}
         orderNumber={orderNumber}
         totalDisplay={totalDisplay}
+        onCancel={onCancel}
       />
     </Elements>
   );

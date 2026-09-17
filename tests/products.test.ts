@@ -8,8 +8,8 @@ describe("Product Catalog Integrity", () => {
 
   it("ensures each product has a valid price, image, and 18+ alcohol notice", () => {
     products.forEach((product) => {
-      expect(product.price).toBe(999);
-      expect(product.priceHalere).toBe(99900);
+      expect(product.price).toBe(1999);
+      expect(product.priceHalere).toBe(199900);
       expect(product.image).toBeDefined();
       expect(product.containsAlcohol).toBe(true);
       expect(product.alcoholDetails.length).toBeGreaterThan(0);

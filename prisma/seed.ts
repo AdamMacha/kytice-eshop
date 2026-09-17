@@ -14,7 +14,7 @@ async function main() {
       id: "default",
       storeName: "MoodBox Bloom",
       phone: "776 208 814",
-      email: "moodboxcz@gmail.cz",
+      email: "moodboxcz@gmail.com",
       address: "Hlavní 28, Průhonice 25243",
       ico: "23965878",
       pragueShippingPrice: 0,

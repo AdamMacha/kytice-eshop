@@ -19,6 +19,8 @@ export const metadata: Metadata = {
   description: "Děkujeme za vaši objednávku v e-shopu MoodBox Bloom.",
 };
 
+import { ClearCartOnSuccess } from "./clear-cart-on-success";
+
 function ConfirmationContent({
   searchParams,
 }: {
@@ -28,6 +30,7 @@ function ConfirmationContent({
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center space-y-10">
+      <ClearCartOnSuccess />
       {/* Success Badge */}
       <div className="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-lg animate-fade-in">
         <CheckCircle2 className="w-10 h-10" />

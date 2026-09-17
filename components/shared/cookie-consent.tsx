@@ -15,10 +15,10 @@ export function CookieConsent() {
     try {
       const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
       if (!consent) {
-        setIsVisible(true);
+        queueMicrotask(() => setIsVisible(true));
       }
     } catch {
-      setIsVisible(false);
+      queueMicrotask(() => setIsVisible(false));
     }
   }, []);
 

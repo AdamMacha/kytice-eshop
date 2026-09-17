@@ -52,7 +52,7 @@ Texty: #4A3A31
 
 Kontakt
 Kateřina Janovská
-Email: moodboxcz@gmail.cz
+Email: moodboxcz@gmail.com
 Telefon: 776 208 814
 
 Fakturační údaje
@@ -83,7 +83,7 @@ Tyto obchodní podmínky upravují vztahy mezi prodávajícím a kupujícím př
 Jméno: Kateřina Janovská
 Sídlo: Hlavní 28, Průhonice 25243
 IČO: 23965878
-Email: moodboxcz@gmail.cz 
+Email: moodboxcz@gmail.com 
 Telefon: 776 208 814
  
 2. Objednávka a uzavření smlouvy

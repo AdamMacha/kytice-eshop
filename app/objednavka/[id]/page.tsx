@@ -33,12 +33,13 @@ export default async function OrderTrackingPage({
 
   let order: any = null;
   try {
-    order = await db.order.findUnique({
-      where: { id },
+    order = await db.order.findFirst({
+      where: {
+        OR: [{ id }, { orderNumber: id }],
+      },
       include: { items: true },
     });
   } catch {
-    // Local dev mock fallback
     order = null;
   }
 
@@ -49,8 +50,7 @@ export default async function OrderTrackingPage({
           Sledování objednávky
         </h1>
         <p className="text-xs text-[#7D6B62]">
-          Objednávka s ID <strong>{id}</strong> se připravuje nebo byla
-          vytvořena v testovacím režimu.
+          Objednávka s označením <strong>{id}</strong> nebyla nalezena.
         </p>
         <Link href={ROUTES.home}>
           <Button variant="primary">Návrat na hlavní stránku</Button>
@@ -60,12 +60,25 @@ export default async function OrderTrackingPage({
   }
 
   const steps = [
-    { key: "PENDING", label: "Objednáno" },
-    { key: "PAID", label: "Zaplaceno" },
-    { key: "PROCESSING", label: "Připravuje se" },
-    { key: "SHIPPED", label: "Odesláno" },
-    { key: "DELIVERED", label: "Doručeno" },
+    { key: "PENDING", label: "Objednáno", stepNum: 1 },
+    { key: "PAID", label: "Zaplaceno", stepNum: 2 },
+    { key: "PROCESSING", label: "V přípravě", stepNum: 3 },
+    { key: "SHIPPED", label: "Odesláno", stepNum: 4 },
+    { key: "DELIVERED", label: "Doručeno", stepNum: 5 },
   ];
+
+  const statusRank: Record<string, number> = {
+    PENDING: 1,
+    AWAITING_PAYMENT: 1,
+    PAID: 2,
+    PROCESSING: 3,
+    SHIPPED: 4,
+    DELIVERED: 5,
+    CANCELLED: 0,
+    REFUNDED: 0,
+  };
+
+  const currentRank = statusRank[order.status] ?? 1;
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-10">
@@ -94,6 +107,12 @@ export default async function OrderTrackingPage({
         </span>
       </div>
 
+      {order.status === "CANCELLED" && (
+        <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-xs text-red-700">
+          Tato objednávka byla zrušena. V případě dotazů nás prosím kontaktujte.
+        </div>
+      )}
+
       {/* Progress Timeline */}
       <div className="p-8 rounded-3xl bg-white border border-[#E8D9CE] shadow-xs space-y-6">
         <h3 className="font-serif text-base font-bold text-[#4A3A31]">
@@ -101,17 +120,41 @@ export default async function OrderTrackingPage({
         </h3>
 
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-          {steps.map((step, idx) => {
-            const isCompleted = true; // Visual state
+          {steps.map((step) => {
+            const isCompleted = step.stepNum <= currentRank && order.status !== "CANCELLED";
+            const isCurrent = step.stepNum === currentRank && order.status !== "CANCELLED";
+
             return (
               <div
                 key={step.key}
-                className="flex flex-col items-center text-center space-y-2 p-3 rounded-2xl bg-[#FDFBF7] border border-[#E8D9CE]/60"
+                className={`flex flex-col items-center text-center space-y-2 p-3 rounded-2xl border transition-all ${
+                  isCurrent
+                    ? "bg-[#F9ECEF] border-[#C88D9A] shadow-xs"
+                    : isCompleted
+                    ? "bg-emerald-50/60 border-emerald-200 text-[#4A3A31]"
+                    : "bg-[#FDFBF7] border-[#E8D9CE]/60 opacity-50"
+                }`}
               >
-                <div className="w-8 h-8 rounded-full bg-[#F9ECEF] text-[#C88D9A] flex items-center justify-center font-bold text-xs">
-                  {idx + 1}
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${
+                    isCurrent
+                      ? "bg-[#C88D9A] text-white"
+                      : isCompleted
+                      ? "bg-emerald-600 text-white"
+                      : "bg-[#E8D9CE] text-[#7D6B62]"
+                  }`}
+                >
+                  {isCompleted ? "✓" : step.stepNum}
                 </div>
-                <span className="font-semibold text-xs text-[#4A3A31]">
+                <span
+                  className={`font-semibold text-xs ${
+                    isCurrent
+                      ? "text-[#C88D9A]"
+                      : isCompleted
+                      ? "text-[#4A3A31]"
+                      : "text-[#A4948B]"
+                  }`}
+                >
                   {step.label}
                 </span>
               </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Script from "next/script";
 import type { PacketaPickupPoint } from "@/types/packeta";
 import { Button } from "@/components/ui/button";
@@ -34,15 +34,8 @@ export function PacketaWidget({
   onSelectPoint,
   error,
 }: PacketaWidgetProps) {
-  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
   const [manualInput, setManualInput] = useState("");
   const [isManualOpen, setIsManualOpen] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.Packeta) {
-      setIsScriptLoaded(true);
-    }
-  }, []);
 
   const openPacketaWidget = () => {
     const apiKey =
@@ -90,7 +83,6 @@ export function PacketaWidget({
       <Script
         src="https://widget.packeta.com/v6/www/js/library.js"
         strategy="lazyOnload"
-        onLoad={() => setIsScriptLoaded(true)}
       />
 
       {/* Trigger & Selection Box */}
