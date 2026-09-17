@@ -258,7 +258,7 @@ export async function createOrder(
               ${itemsHtml}
               <tr style="font-weight: bold;"><td style="padding: 8px 0;">Celkem:</td><td style="text-align: right;">${formatCZK(totalPriceHalere)}</td></tr>
             </table>
-            <p><a href="${process.env.NEXT_PUBLIC_APP_URL || "https://moodboxbloom.cz"}/admin/objednavky/${createdOrderId}" style="display: inline-block; background: #C88D9A; color: white; padding: 10px 18px; text-decoration: none; border-radius: 8px; font-weight: bold;">Otevřít objednávku v administraci →</a></p>
+            <p><a href="${process.env.NEXT_PUBLIC_APP_URL || "https://www.moodbox.cz"}/admin/objednavky/${createdOrderId}" style="display: inline-block; background: #C88D9A; color: white; padding: 10px 18px; text-decoration: none; border-radius: 8px; font-weight: bold;">Otevřít objednávku v administraci →</a></p>
           </div>
         `,
       });

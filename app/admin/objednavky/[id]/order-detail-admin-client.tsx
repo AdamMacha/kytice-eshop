@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { formatCZK, formatDateTime } from "@/lib/format";
 import { ORDER_STATUS_LABELS, ORDER_STATUS_COLORS, type OrderStatus } from "@/types/order";
 import {
   updateOrderStatusAction,
   createPacketaShipmentForOrderAction,
+  deleteOrderAction,
 } from "@/actions/admin-orders";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,13 +18,16 @@ import {
   ExternalLink,
   MessageSquare,
   AlertCircle,
+  Trash2,
 } from "lucide-react";
 
 export function OrderDetailAdminClient({ order }: { order: any }) {
+  const router = useRouter();
   const [status, setStatus] = useState<OrderStatus>(order.status);
   const [internalNote, setInternalNote] = useState("");
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [isCreatingPacketa, setIsCreatingPacketa] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState<{
     type: "success" | "error";
     text: string;
@@ -68,6 +73,29 @@ export function OrderDetailAdminClient({ order }: { order: any }) {
       });
     }
     setIsCreatingPacketa(false);
+  };
+
+  const handleDeleteOrder = async () => {
+    if (
+      !window.confirm(
+        `Opravdu chcete trvale smazat objednávku č. ${order.orderNumber}?\n\nTato akce je nevratná a smaže veškeré údaje, historii i položky objednávky.`
+      )
+    ) {
+      return;
+    }
+
+    setIsDeleting(true);
+    setFeedbackMessage(null);
+    const res = await deleteOrderAction(order.id);
+    if (res.success) {
+      router.push("/admin/objednavky");
+    } else {
+      setFeedbackMessage({
+        type: "error",
+        text: res.error || "Nepodařilo se smazat objednávku.",
+      });
+      setIsDeleting(false);
+    }
   };
 
   return (
@@ -137,54 +165,68 @@ export function OrderDetailAdminClient({ order }: { order: any }) {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 pt-2">
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={handleUpdateStatus}
-            isLoading={isUpdatingStatus}
-            className="font-semibold"
-          >
-            Uložit nový stav
-          </Button>
-
-          {/* Packeta Shipment Action */}
-          {!order.packetaBarcode ? (
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-[#F0E4DC]">
+          <div className="flex flex-wrap items-center gap-3">
             <Button
-              variant="gold"
+              variant="primary"
               size="sm"
-              onClick={handleCreatePacketaShipment}
-              isLoading={isCreatingPacketa}
+              onClick={handleUpdateStatus}
+              isLoading={isUpdatingStatus}
               className="font-semibold"
             >
-              <Truck className="w-4 h-4 mr-1.5" />
-              Vytvořit zásilku v Zásilkovně
+              Uložit nový stav
             </Button>
-          ) : (
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#FBF6EE] border border-[#E6C89C] text-xs font-bold text-[#A87938]">
-              <Truck className="w-4 h-4" />
-              <span>Číslo zásilky: {order.packetaBarcode}</span>
-              {order.trackingUrl && (
-                <a
-                  href={order.trackingUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-[#C88D9A] underline ml-1"
-                >
-                  Sledovat
-                </a>
-              )}
-            </div>
-          )}
 
+            {/* Packeta Shipment Action */}
+            {!order.packetaBarcode ? (
+              <Button
+                variant="gold"
+                size="sm"
+                onClick={handleCreatePacketaShipment}
+                isLoading={isCreatingPacketa}
+                className="font-semibold"
+              >
+                <Truck className="w-4 h-4 mr-1.5" />
+                Vytvořit zásilku v Zásilkovně
+              </Button>
+            ) : (
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#FBF6EE] border border-[#E6C89C] text-xs font-bold text-[#A87938]">
+                <Truck className="w-4 h-4" />
+                <span>Číslo zásilky: {order.packetaBarcode}</span>
+                {order.trackingUrl && (
+                  <a
+                    href={order.trackingUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[#C88D9A] underline ml-1"
+                  >
+                    Sledovat
+                  </a>
+                )}
+              </div>
+            )}
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.print()}
+            >
+              <Printer className="w-3.5 h-3.5 mr-1" />
+              Tisk objednávky
+            </Button>
+          </div>
+
+          {/* Danger Zone: Delete order */}
           <Button
+            type="button"
             variant="outline"
             size="sm"
-            onClick={() => window.print()}
-            className="ml-auto"
+            isLoading={isDeleting}
+            onClick={handleDeleteOrder}
+            className="text-xs text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 font-semibold cursor-pointer"
           >
-            <Printer className="w-3.5 h-3.5 mr-1" />
-            Tisk objednávky
+            <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+            Smazat objednávku
           </Button>
         </div>
       </div>

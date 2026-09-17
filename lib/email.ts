@@ -11,7 +11,7 @@ export const resend = process.env.RESEND_API_KEY
   : null;
 
 export const EMAIL_FROM =
-  process.env.EMAIL_FROM || "MoodBox Bloom <objednavky@moodboxbloom.cz>";
+  process.env.EMAIL_FROM || "MoodBox Bloom <objednavky@moodbox.cz>";
 
 /**
  * Send an email using Resend.

@@ -85,7 +85,7 @@ export async function POST(request: Request) {
                   <p>Objednávka č. <strong>${orderNumber || orderId}</strong> byla úspěšně uhrazena přes Stripe.</p>
                   <p><strong>Částka:</strong> ${formatCZK(paymentIntent.amount)}</p>
                   <p><strong>Zákazník:</strong> ${paymentIntent.metadata?.customerName || "N/A"} (${paymentIntent.receipt_email || ""})</p>
-                  <p style="margin-top: 20px;"><a href="${process.env.NEXT_PUBLIC_APP_URL || "https://moodboxbloom.cz"}/admin/objednavky/${orderId}" style="display: inline-block; background: #C88D9A; color: white; padding: 10px 18px; text-decoration: none; border-radius: 8px; font-weight: bold;">Zobrazit objednávku v administraci →</a></p>
+                  <p style="margin-top: 20px;"><a href="${process.env.NEXT_PUBLIC_APP_URL || "https://www.moodbox.cz"}/admin/objednavky/${orderId}" style="display: inline-block; background: #C88D9A; color: white; padding: 10px 18px; text-decoration: none; border-radius: 8px; font-weight: bold;">Zobrazit objednávku v administraci →</a></p>
                 </div>
               `,
             });

@@ -22,7 +22,7 @@ const jakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL || "https://moodboxbloom.cz"
+    process.env.NEXT_PUBLIC_APP_URL || "https://www.moodbox.cz"
   ),
   title: {
     template: "%s | MoodBox Bloom",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "cs_CZ",
-    url: "https://moodboxbloom.cz",
+    url: "https://www.moodbox.cz",
     siteName: BRAND.name,
     title: "MoodBox Bloom | Originální sladké kytice",
     description: BRAND.tagline,

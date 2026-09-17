@@ -147,3 +147,57 @@ export async function createPacketaShipmentForOrderAction(orderId: string) {
     return { success: false, error: error.message || "Chyba při vytváření zásilky." };
   }
 }
+
+export async function deleteOrderAction(orderId: string) {
+  const isAuth = await isAdminAuthenticated();
+  if (!isAuth) {
+    return { success: false, error: "Neautorizovaný přístup." };
+  }
+
+  try {
+    const existing = await db.order.findUnique({
+      where: { id: orderId },
+      select: { id: true, orderNumber: true },
+    });
+
+    if (!existing) {
+      return { success: false, error: "Objednávka nebyla nalezena." };
+    }
+
+    await db.order.delete({
+      where: { id: orderId },
+    });
+
+    revalidatePath("/admin");
+    revalidatePath("/admin/objednavky");
+    return { success: true };
+  } catch (error: any) {
+    console.error("[deleteOrderAction Error]:", error);
+    return { success: false, error: error.message || "Nepodařilo se smazat objednávku." };
+  }
+}
+
+export async function deleteOrdersAction(orderIds: string[]) {
+  const isAuth = await isAdminAuthenticated();
+  if (!isAuth) {
+    return { success: false, error: "Neautorizovaný přístup." };
+  }
+
+  if (!orderIds || orderIds.length === 0) {
+    return { success: false, error: "Nebyly vybrány žádné objednávky ke smazání." };
+  }
+
+  try {
+    const result = await db.order.deleteMany({
+      where: { id: { in: orderIds } },
+    });
+
+    revalidatePath("/admin");
+    revalidatePath("/admin/objednavky");
+    return { success: true, count: result.count };
+  } catch (error: any) {
+    console.error("[deleteOrdersAction Error]:", error);
+    return { success: false, error: error.message || "Nepodařilo se smazat vybrané objednávky." };
+  }
+}
+
