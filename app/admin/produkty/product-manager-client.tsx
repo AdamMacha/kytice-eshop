@@ -155,7 +155,7 @@ function ProductFormModal({
                 )}
                 <div className="flex-1 space-y-2">
                   <input type="text" name="image" value={formData.image || ""} onChange={handleChange} placeholder="URL obrázku (nebo nahrajte pomocí tlačítka níže)" className="w-full p-2 border rounded-xl text-sm" />
-                  <input type="file" accept="image/*" onChange={handleImageUpload} className="text-xs w-full" />
+                  <input type="file" accept="image/*" onChange={handleImageUpload} className="text-xs w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#F9ECEF] file:text-[#C88D9A] hover:file:bg-[#F3E7DF] file:cursor-pointer cursor-pointer" />
                 </div>
               </div>
             </div>
