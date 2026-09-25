@@ -6,6 +6,7 @@ import {
   PaymentElement,
   useStripe,
   useElements,
+  ExpressCheckoutElement
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { Button } from "@/components/ui/button";
@@ -101,15 +102,44 @@ function PaymentFormInternal({
         </div>
 
         {stripePromise ? (
-          <PaymentElement
-            options={{
-              layout: "tabs",
-              wallets: {
-                applePay: "auto",
-                googlePay: "auto",
-              }
-            }}
-          />
+          <div className="space-y-4">
+            <ExpressCheckoutElement 
+              onConfirm={async (event) => {
+                if (!stripe || !elements) return;
+                setIsProcessing(true);
+                const { error } = await stripe.confirmPayment({
+                  elements,
+                  confirmParams: {
+                    return_url: `${window.location.origin}${ROUTES.orderConfirmation}?orderId=${orderId}&orderNumber=${orderNumber}`,
+                  },
+                });
+
+                if (error) {
+                  setErrorMessage(error.message || "Rychlá platba nebyla úspěšná.");
+                  setIsProcessing(false);
+                }
+              }}
+            />
+            
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                <div className="w-full border-t border-[#E8D9CE]" />
+              </div>
+              <div className="relative flex justify-center text-[11px] font-medium uppercase tracking-widest text-[#7D6B62]">
+                <span className="bg-white px-4">Nebo zadat kartu ručně</span>
+              </div>
+            </div>
+
+            <PaymentElement
+              options={{
+                layout: "tabs",
+                wallets: {
+                  applePay: "never",
+                  googlePay: "never",
+                }
+              }}
+            />
+          </div>
         ) : (
           <div className="p-4 bg-[#F9ECEF]/70 border border-[#EBC3CC] rounded-xl text-xs text-[#4A3A31] space-y-2">
             <p className="font-semibold text-[#C88D9A]">
