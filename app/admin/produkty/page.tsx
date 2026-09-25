@@ -24,12 +24,16 @@ export default async function AdminProductsPage() {
     if (dbP) {
       return {
         ...staticP,
-        price: dbP.price,
-        priceHalere: dbP.priceHalere,
-        inStock: dbP.inStock,
+        ...dbP,
       };
     }
     return staticP;
+  });
+
+  dbProducts.forEach((dbP) => {
+    if (!mergedProducts.find((p) => p.slug === dbP.slug)) {
+      mergedProducts.push(dbP);
+    }
   });
 
   return (
