@@ -93,7 +93,7 @@ function PaymentFormInternal({
         <div className="flex items-center justify-between pb-3 border-b border-[#F0E4DC]">
           <div className="flex items-center gap-2 text-xs font-bold text-[#4A3A31]">
             <CreditCard className="w-4 h-4 text-[#C88D9A]" />
-            <span>Platební údaje karty</span>
+            <span>Karta / Apple Pay / Google Pay</span>
           </div>
           <span className="text-[11px] text-[#7D6B62]">
             Konečná cena: <strong className="text-[#C88D9A]">{totalDisplay}</strong>
@@ -104,6 +104,10 @@ function PaymentFormInternal({
           <PaymentElement
             options={{
               layout: "tabs",
+              wallets: {
+                applePay: "auto",
+                googlePay: "auto",
+              }
             }}
           />
         ) : (
@@ -112,7 +116,7 @@ function PaymentFormInternal({
               Integrovaná platební brána Stripe (Testovací režim)
             </p>
             <p className="text-[11px] text-[#7D6B62]">
-              Kliknutím na tlačítko níže simulujete úspěšnou platbu kartou ve výši <strong>{totalDisplay}</strong>.
+              Kliknutím na tlačítko níže simulujete úspěšnou platbu ve výši <strong>{totalDisplay}</strong>.
             </p>
           </div>
         )}
@@ -130,7 +134,7 @@ function PaymentFormInternal({
         className="w-full font-bold shadow-lg text-base py-4"
       >
         <Lock className="w-4 h-4 mr-2" />
-        Zaplatit {totalDisplay} kartou
+        Zaplatit {totalDisplay}
       </Button>
 
       {onCancel && (
