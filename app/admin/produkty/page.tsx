@@ -43,15 +43,14 @@ export default async function AdminProductsPage() {
           Administrace
         </span>
         <h1 className="font-serif text-3xl font-bold text-[#4A3A31]">
-          Kytice, Ceník & Dostupnost
+          Správa produktů, Ceník & Dostupnost
         </h1>
         <p className="text-xs text-[#7D6B62] mt-1">
-          Zapínejte a vypínejte dostupnost jednotlivých edic kytic a upravujte
-          jejich prodejní ceny.
+          Spravujte vaše kytice a boxy, přidávejte nové produkty, zapínejte a vypínejte jejich dostupnost a upravujte prodejní ceny.
         </p>
       </div>
 
-      <ProductManagerClient initialProducts={mergedProducts} />
+      <ProductManagerClient initialProducts={mergedProducts as unknown as import("@/types/product").Product[]} />
     </div>
   );
 }

@@ -11,10 +11,11 @@ export const metadata: Metadata = {
 };
 
 export default async function BoxesPage() {
-  const products = await db.product.findMany({
+  const productsData = await db.product.findMany({
     where: { inStock: true, category: 'BOX' },
     orderBy: { createdAt: "asc" },
   });
+  const products = productsData as unknown as import("@/types/product").Product[];
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12">
       {/* Header */}
