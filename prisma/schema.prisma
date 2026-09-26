@@ -124,6 +124,7 @@ model Product {
   alcoholDetails  String
   color           String   @default("#C88D9A")
   inStock         Boolean  @default(true)
+  category        ProductCategory @default(BOUQUET)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
@@ -144,6 +145,11 @@ model StoreSetting {
 }
 
 // ─── Enums ─────────────────────────────────────────────────────────
+
+enum ProductCategory {
+  BOUQUET
+  BOX
+}
 
 enum OrderStatus {
   PENDING

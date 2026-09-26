@@ -10,4 +10,5 @@ export interface Product {
   alcoholDetails: string;
   color: string; // primary color for UI accents
   inStock: boolean;
+  category: "BOUQUET" | "BOX";
 }

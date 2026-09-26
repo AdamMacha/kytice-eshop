@@ -26,6 +26,7 @@ export const COLORS = {
 export const ROUTES = {
   home: "/",
   products: "/produkty",
+  boxes: "/boxy",
   product: (slug: string) => `/produkty/${slug}` as const,
   cart: "/kosik",
   checkout: "/pokladna",

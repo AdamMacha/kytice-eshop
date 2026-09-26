@@ -5,14 +5,14 @@ import { ProductGrid } from "@/components/product/product-grid";
 import { Wine, Sparkles } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Nabídka sladkých kytic",
+  title: "Nabídka dárkových boxů",
   description:
-    "Prohlédněte si naši nabídku ručně tvořených sladkých kytic s prémiovými čokoládami a alkoholem.",
+    "Prohlédněte si naši nabídku ručně tvořených dárkových boxů s prémiovými čokoládami a alkoholem.",
 };
 
-export default async function ProductsPage() {
+export default async function BoxesPage() {
   const products = await db.product.findMany({
-    where: { inStock: true, category: 'BOUQUET' },
+    where: { inStock: true, category: 'BOX' },
     orderBy: { createdAt: "asc" },
   });
   return (
@@ -24,11 +24,11 @@ export default async function ProductsPage() {
           <span>Kompletní nabídka</span>
         </div>
         <h1 className="font-serif text-3xl sm:text-5xl font-bold text-[#4A3A31]">
-          Originální sladké kytice
+          Originální dárkové boxy
         </h1>
         <p className="text-sm text-[#7D6B62] leading-relaxed">
-          Každá kytice v sobě ukrývá kombinaci kvalitních čokolád, ručně
-          vázaných ozdob a vybraného alkoholu. Kytice vám také rádi upravíme na
+          Každý box v sobě ukrývá kombinaci kvalitních čokolád, ručně
+          vázaných ozdob a vybraného alkoholu. Boxy vám také rádi upravíme na
           míru na přání.
         </p>
       </div>
@@ -37,7 +37,7 @@ export default async function ProductsPage() {
       <div className="p-4 rounded-2xl bg-[#FFF4E5] border border-[#FFE0B2] text-center max-w-3xl mx-auto flex items-center justify-center gap-2 text-xs text-[#B76E00]">
         <Wine className="w-4 h-4 shrink-0" />
         <span>
-          <strong>Upozornění:</strong> Všechny naše kytice obsahují alkohol a
+          <strong>Upozornění:</strong> Všechny naše boxy obsahují alkohol a
           jsou určeny výhradně osobám starším 18 let.
         </span>
       </div>

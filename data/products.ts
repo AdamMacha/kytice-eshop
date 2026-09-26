@@ -14,6 +14,7 @@ export const products: Product[] = [
     alcoholDetails: "Obsahuje šumivé víno",
     color: "#F4B8C5",
     inStock: true,
+    category: "BOUQUET",
   },
   {
     slug: "red-passion",
@@ -28,6 +29,7 @@ export const products: Product[] = [
     alcoholDetails: "Obsahuje rum nebo Jägermeister",
     color: "#C41E3A",
     inStock: true,
+    category: "BOUQUET",
   },
   {
     slug: "blue-dream",
@@ -42,6 +44,7 @@ export const products: Product[] = [
     alcoholDetails: "Obsahuje bílé víno",
     color: "#7BB8E0",
     inStock: true,
+    category: "BOUQUET",
   },
   {
     slug: "magic-bloom",
@@ -56,6 +59,7 @@ export const products: Product[] = [
     alcoholDetails: "Obsahuje červené víno",
     color: "#9B59B6",
     inStock: true, // NOTE: image not yet provided — set to false before launch if missing
+    category: "BOUQUET",
   },
   {
     slug: "golden-elegance",
@@ -70,6 +74,7 @@ export const products: Product[] = [
     alcoholDetails: "Obsahuje rum a šumivé víno",
     color: "#D4AF37",
     inStock: true,
+    category: "BOUQUET",
   },
 ];
 

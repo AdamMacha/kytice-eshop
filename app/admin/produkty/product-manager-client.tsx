@@ -31,13 +31,14 @@ function ProductFormModal({
       containsAlcohol: true,
       alcoholDetails: "",
       color: "#C88D9A",
-      inStock: true
+      inStock: true,
+      category: "BOUQUET"
     }
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     let finalValue: any = value;
     if (type === 'checkbox') {
@@ -84,7 +85,7 @@ function ProductFormModal({
       <div className="bg-white rounded-3xl w-full max-w-2xl shadow-xl flex flex-col my-8 max-h-[90vh]">
         <div className="p-6 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white rounded-t-3xl z-10">
           <h2 className="text-xl font-serif font-bold text-[#4A3A31]">
-            {product ? "Upravit květinu" : "Přidat novou květinu"}
+            {product ? "Upravit produkt" : "Přidat nový produkt"}
           </h2>
           <button onClick={onClose} className="p-2 text-gray-500 hover:bg-gray-100 rounded-full">
             <X className="w-5 h-5" />
@@ -108,9 +109,18 @@ function ProductFormModal({
               </div>
             </div>
             
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-gray-700">Popis</label>
-              <textarea required name="description" value={formData.description || ""} onChange={handleChange} rows={3} className="w-full p-2 border rounded-xl text-sm" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-gray-700">Kategorie</label>
+                <select name="category" value={formData.category || "BOUQUET"} onChange={handleChange} className="w-full p-2 border rounded-xl text-sm">
+                  <option value="BOUQUET">Kytice</option>
+                  <option value="BOX">Box</option>
+                </select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-gray-700">Popis</label>
+                <textarea required name="description" value={formData.description || ""} onChange={handleChange} rows={1} className="w-full p-2 border rounded-xl text-sm" />
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -167,7 +177,7 @@ function ProductFormModal({
             Zrušit
           </Button>
           <Button form="productForm" type="submit" variant="primary" isLoading={loading}>
-            Uložit květinu
+            Uložit produkt
           </Button>
         </div>
       </div>
@@ -211,7 +221,7 @@ export function ProductManagerClient({
     });
     setEditingProduct(null);
     setIsAddingNew(false);
-    setFeedback(`Květina "${updatedProduct.name}" byla úspěšně uložena.`);
+    setFeedback(`Produkt "${updatedProduct.name}" byl úspěšně uložen.`);
     setTimeout(() => setFeedback(null), 3000);
   };
 
@@ -227,7 +237,7 @@ export function ProductManagerClient({
         
         <Button variant="gold" onClick={() => setIsAddingNew(true)} className="shrink-0 flex items-center gap-2">
           <Plus className="w-4 h-4" />
-          Přidat novou květinu
+          Přidat nový produkt
         </Button>
       </div>
 
@@ -244,7 +254,7 @@ export function ProductManagerClient({
             <button 
               onClick={() => setEditingProduct(product)}
               className="absolute top-8 right-8 z-10 p-2 bg-white/90 backdrop-blur rounded-full shadow hover:bg-gray-50 transition"
-              title="Upravit květinu"
+              title="Upravit produkt"
             >
               <Edit2 className="w-4 h-4 text-[#A87938]" />
             </button>
@@ -271,9 +281,14 @@ export function ProductManagerClient({
 
               {/* Title & Subtitle */}
               <div>
-                <span className="text-[10px] uppercase font-bold tracking-wider text-[#A87938]">
-                  {product.subtitle}
-                </span>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className={`text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full ${product.category === 'BOX' ? 'bg-[#D4AF7F]/20 text-[#A87938]' : 'bg-[#C88D9A]/20 text-[#A84A5C]'}`}>
+                    {product.category === 'BOX' ? 'Box' : 'Kytice'}
+                  </span>
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-[#A87938]">
+                    {product.subtitle}
+                  </span>
+                </div>
                 <h3 className="font-serif text-lg font-bold text-[#4A3A31]">
                   {product.name}
                 </h3>
@@ -311,7 +326,7 @@ export function ProductManagerClient({
               >
                 {product.inStock
                   ? "Označit jako nedostupné"
-                  : "Aktivovat prodej kytice"}
+                  : "Aktivovat prodej"}
               </Button>
             </div>
           </div>

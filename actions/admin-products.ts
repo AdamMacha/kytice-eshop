@@ -100,6 +100,7 @@ export async function upsertProductAction(data: any) {
         alcoholDetails: data.alcoholDetails,
         color: data.color,
         inStock: data.inStock,
+        category: data.category || "BOUQUET",
       },
       create: {
         slug,
@@ -113,6 +114,7 @@ export async function upsertProductAction(data: any) {
         alcoholDetails: data.alcoholDetails,
         color: data.color,
         inStock: data.inStock,
+        category: data.category || "BOUQUET",
       },
     });
 

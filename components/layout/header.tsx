@@ -21,6 +21,7 @@ export function Header() {
 
   const navLinks = [
     { href: ROUTES.products, label: "Kytice" },
+    { href: ROUTES.boxes, label: "Boxy" },
     { href: ROUTES.about, label: "O nás" },
     { href: ROUTES.contact, label: "Kontakt" },
     { href: ROUTES.terms, label: "Doprava & Platba" },
