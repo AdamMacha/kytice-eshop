@@ -162,7 +162,7 @@ export function Footer() {
             </p>
             <span className="hidden sm:inline text-[#7D6B62]">|</span>
             <p>
-              Vytvořilo na zakázku studio <a href="https://www.technologio.eu/" target="_blank" rel="noopener noreferrer" className="hover:text-white hover:underline transition text-[#E6D3C2]">Technologio</a>
+              E-shop vytvořilo na zakázku studio <a href="https://www.technologio.eu/" target="_blank" rel="noopener noreferrer" className="hover:text-white hover:underline transition text-[#E6D3C2]">Technologio</a>
             </p>
           </div>
         </div>
