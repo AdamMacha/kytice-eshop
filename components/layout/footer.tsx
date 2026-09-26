@@ -156,9 +156,15 @@ export function Footer() {
         {/* Bottom copyright */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#A4948B] gap-4">
           <p>© {new Date().getFullYear()} MoodBox Bloom. Všechna práva vyhrazena.</p>
-          <p className="flex items-center gap-1">
-            Vytvořeno s <Heart className="w-3.5 h-3.5 text-[#C88D9A] fill-current" /> pro jedinečné momenty
-          </p>
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center">
+            <p className="flex items-center gap-1">
+              Vytvořeno s <Heart className="w-3.5 h-3.5 text-[#C88D9A] fill-current" /> pro jedinečné momenty
+            </p>
+            <span className="hidden sm:inline text-[#7D6B62]">|</span>
+            <p>
+              Vytvořilo na zakázku studio <a href="https://www.technologio.eu/" target="_blank" rel="noopener noreferrer" className="hover:text-white hover:underline transition text-[#E6D3C2]">Technologio</a>
+            </p>
+          </div>
         </div>
       </div>
     </footer>
