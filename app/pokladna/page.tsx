@@ -457,7 +457,8 @@ export default function CheckoutPage() {
                       label="Doručovací ulice a číslo"
                       placeholder="např. Václavské náměstí 1"
                       error={errors.shippingStreet?.message}
-                      disabled={isSameAddress}
+                      readOnly={isSameAddress}
+                      className={isSameAddress ? "bg-gray-50 text-gray-500 cursor-not-allowed" : ""}
                       {...register("shippingStreet")}
                       required
                     />
@@ -466,7 +467,8 @@ export default function CheckoutPage() {
                         label="Doručovací město"
                         placeholder="např. Praha"
                         error={errors.shippingCity?.message}
-                        disabled={isSameAddress}
+                        readOnly={isSameAddress}
+                        className={isSameAddress ? "bg-gray-50 text-gray-500 cursor-not-allowed" : ""}
                         {...register("shippingCity")}
                         required
                       />
@@ -474,7 +476,8 @@ export default function CheckoutPage() {
                         label="Doručovací PSČ"
                         placeholder="např. 110 00"
                         error={errors.shippingZip?.message}
-                        disabled={isSameAddress}
+                        readOnly={isSameAddress}
+                        className={isSameAddress ? "bg-gray-50 text-gray-500 cursor-not-allowed" : ""}
                         {...register("shippingZip")}
                         required
                       />
