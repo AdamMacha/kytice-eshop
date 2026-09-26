@@ -42,6 +42,7 @@ export default function CheckoutPage() {
     handleSubmit,
     watch,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutFormSchema),
@@ -58,10 +59,24 @@ export default function CheckoutPage() {
     },
   });
 
+  const [isSameAddress, setIsSameAddress] = useState(false);
+
   const selectedShipping = watch("shippingMethod");
   const selectedPayment = watch("paymentMethod");
   const packetaPointId = watch("packetaPointId");
   const packetaPointName = watch("packetaPointName");
+
+  const billingStreet = watch("billingStreet");
+  const billingCity = watch("billingCity");
+  const billingZip = watch("billingZip");
+
+  React.useEffect(() => {
+    if (isSameAddress) {
+      setValue("shippingStreet", billingStreet || "", { shouldValidate: true });
+      setValue("shippingCity", billingCity || "", { shouldValidate: true });
+      setValue("shippingZip", billingZip || "", { shouldValidate: true });
+    }
+  }, [isSameAddress, billingStreet, billingCity, billingZip, setValue]);
 
   // Dynamic price calculation
   const currentShippingMethod = shippingMethods.find(
@@ -418,13 +433,31 @@ export default function CheckoutPage() {
                 {(selectedShipping === "PRAGUE_DELIVERY" ||
                   selectedShipping === "PACKETA_ADDRESS") && (
                   <div className="pt-4 border-t border-[#F0E4DC] space-y-4 animate-fade-in">
-                    <p className="text-xs font-bold uppercase tracking-wider text-[#A87938]">
-                      Adresa doručení
-                    </p>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <p className="text-xs font-bold uppercase tracking-wider text-[#A87938]">
+                        Adresa doručení
+                      </p>
+                      <Checkbox
+                        id="isSameAddress"
+                        checked={isSameAddress}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          const checked = e.target.checked;
+                          setIsSameAddress(checked);
+                          if (!checked) {
+                            setValue("shippingStreet", "", { shouldValidate: true });
+                            setValue("shippingCity", "", { shouldValidate: true });
+                            setValue("shippingZip", "", { shouldValidate: true });
+                          }
+                        }}
+                        label={<span className="text-xs font-medium text-[#4A3A31]">Stejná jako fakturační adresa</span>}
+                      />
+                    </div>
+                    
                     <Input
                       label="Doručovací ulice a číslo"
                       placeholder="např. Václavské náměstí 1"
                       error={errors.shippingStreet?.message}
+                      disabled={isSameAddress}
                       {...register("shippingStreet")}
                       required
                     />
@@ -433,6 +466,7 @@ export default function CheckoutPage() {
                         label="Doručovací město"
                         placeholder="např. Praha"
                         error={errors.shippingCity?.message}
+                        disabled={isSameAddress}
                         {...register("shippingCity")}
                         required
                       />
@@ -440,6 +474,7 @@ export default function CheckoutPage() {
                         label="Doručovací PSČ"
                         placeholder="např. 110 00"
                         error={errors.shippingZip?.message}
+                        disabled={isSameAddress}
                         {...register("shippingZip")}
                         required
                       />
