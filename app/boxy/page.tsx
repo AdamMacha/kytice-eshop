@@ -43,7 +43,7 @@ export default async function BoxesPage() {
             Nové dárkové boxy pro vás právě připravujeme
           </h2>
           <p className="text-[#7D6B62] max-w-lg">
-            Pečlivě pro vás vymýšlíme ty nejlepší kombinace chutí a designu. 
+            Pečlivě pro vás vymýšlíme ty nejlepší kombinace chutí a designu.
             První limitované edice se tu objeví už velmi brzy, určitě se máte na co těšit!
           </p>
         </div>
