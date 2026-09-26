@@ -21,10 +21,12 @@ export async function sendEmail({
   to,
   subject,
   html,
+  attachments,
 }: {
   to: string;
   subject: string;
   html: string;
+  attachments?: { filename: string; content: Buffer }[];
 }) {
   if (!resend) {
     console.warn(
@@ -38,6 +40,7 @@ export async function sendEmail({
     to,
     subject,
     html,
+    attachments,
   });
 
   if (error) {

@@ -211,13 +211,39 @@ export async function createOrder(
 
     // Customer email
     try {
+      // Generate Invoice PDF for COD
+      const { generateInvoice } = await import("@/lib/pdf");
+      const storeSetting = await db.storeSetting.findFirst() || {
+        storeName: "MoodBox Bloom",
+        address: "Hlavní 28, Průhonice 25243",
+        ico: "23965878",
+        email: "moodboxcz@gmail.com",
+        phone: "776 208 814"
+      };
+      
+      const createdOrderWithItems = await db.order.findUnique({
+        where: { id: createdOrderId },
+        include: { items: true }
+      });
+      
+      const invoiceBuffer = createdOrderWithItems ? await generateInvoice(createdOrderWithItems, storeSetting) : null;
+
+      const attachments = invoiceBuffer ? [
+        {
+          filename: `Faktura_${orderNumber}.pdf`,
+          content: invoiceBuffer,
+        }
+      ] : undefined;
+
       await sendEmail({
         to: validatedData.email,
         subject: `Potvrzení objednávky ${orderNumber} | MoodBox Bloom`,
+        attachments,
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #4A3A31; max-width: 600px; margin: 0 auto; background: #ffffff; padding: 24px; border: 1px solid #E8D9CE; border-radius: 16px;">
             <h1 style="color: #C88D9A; margin-top: 0; font-size: 24px;">Děkujeme za vaši objednávku!</h1>
             <p>Vaše objednávka č. <strong>${orderNumber}</strong> byla úspěšně přijata a brzy se pustíme do ruční výroby.</p>
+            ${invoiceBuffer ? '<p>V příloze naleznete vaši fakturu.</p>' : ''}
             
             <table style="width: 100%; border-collapse: collapse; margin: 20px 0; border-top: 1px solid #E8D9CE; border-bottom: 1px solid #E8D9CE; font-size: 14px;">
               ${itemsHtml}

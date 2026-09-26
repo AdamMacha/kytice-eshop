@@ -40,8 +40,9 @@ export async function POST(request: Request) {
 
       if (orderId) {
         try {
-          await db.order.update({
+          const updatedOrder = await db.order.update({
             where: { id: orderId },
+            include: { items: true },
             data: {
               status: "PAID",
               paymentStatus: "PAID",
@@ -57,6 +58,17 @@ export async function POST(request: Request) {
             },
           });
 
+          // Generate Invoice PDF
+          const { generateInvoice } = await import("@/lib/pdf");
+          const storeSetting = await db.storeSetting.findFirst() || {
+            storeName: "MoodBox Bloom",
+            address: "Hlavní 28, Průhonice 25243",
+            ico: "23965878",
+            email: "moodboxcz@gmail.com",
+            phone: "776 208 814"
+          };
+          const invoiceBuffer = await generateInvoice(updatedOrder, storeSetting);
+
           // Send confirmation email
           if (paymentIntent.receipt_email) {
             await sendEmail({
@@ -67,10 +79,17 @@ export async function POST(request: Request) {
                   <h1 style="color: #C88D9A;">Platba byla úspěšně přijata!</h1>
                   <p>Vaše platba ve výši <strong>${formatCZK(paymentIntent.amount)}</strong> byla potvrzena.</p>
                   <p>Objednávka č. <strong>${orderNumber || orderId}</strong> je nyní v přípravě.</p>
+                  <p>V příloze tohoto e-mailu naleznete vaši fakturu (daňový doklad).</p>
                   <hr style="border: 1px solid #E8D9CE; margin: 20px 0;" />
                   <p style="font-size: 12px; color: #7D6B62;">MoodBox Bloom – Originální sladké kytice</p>
                 </div>
               `,
+              attachments: [
+                {
+                  filename: `Faktura_${orderNumber || orderId}.pdf`,
+                  content: invoiceBuffer,
+                }
+              ]
             });
           }
 
