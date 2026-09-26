@@ -104,6 +104,17 @@ function PaymentFormInternal({
         {stripePromise ? (
           <div className="space-y-4">
             <ExpressCheckoutElement 
+              options={{
+                paymentMethods: {
+                  applePay: "always",
+                  googlePay: "always",
+                  link: "never",
+                },
+                buttonType: {
+                  applePay: "buy",
+                  googlePay: "buy",
+                }
+              }}
               onConfirm={async (event) => {
                 if (!stripe || !elements) return;
                 setIsProcessing(true);
