@@ -3,7 +3,6 @@
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import fs from "fs/promises";
 import path from "path";
 
 export async function toggleProductStockAction(slug: string, inStock: boolean) {
@@ -137,21 +136,36 @@ export async function uploadProductImageAction(formData: FormData) {
 
   try {
     const file = formData.get("file") as File;
-    if (!file) return { success: false, error: "Nebyl nahrán žádný soubor." };
+    if (!file || !file.size) {
+      return { success: false, error: "Nebyl nahrán žádný soubor." };
+    }
+
+    if (file.size > 8 * 1024 * 1024) {
+      return { success: false, error: "Velikost obrázku nesmí překročit 8 MB." };
+    }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const ext = path.extname(file.name) || ".png";
-    const filename = `${Date.now()}-${Math.random().toString(36).substring(7)}${ext}`;
-    
-    const uploadDir = path.join(process.cwd(), "public/products");
-    await fs.mkdir(uploadDir, { recursive: true });
-    
-    const filePath = path.join(uploadDir, filename);
-    await fs.writeFile(filePath, buffer);
+    let mimeType = file.type;
+    if (!mimeType || !mimeType.startsWith("image/")) {
+      const ext = path.extname(file.name).toLowerCase();
+      if (ext === ".webp") mimeType = "image/webp";
+      else if (ext === ".png") mimeType = "image/png";
+      else if (ext === ".gif") mimeType = "image/gif";
+      else if (ext === ".svg") mimeType = "image/svg+xml";
+      else mimeType = "image/jpeg";
+    }
 
-    return { success: true, url: `/products/${filename}` };
+    const saved = await db.uploadedImage.create({
+      data: {
+        filename: file.name,
+        mimeType,
+        data: buffer,
+      },
+    });
+
+    return { success: true, url: `/api/images/${saved.id}` };
   } catch (error: any) {
     console.error("[Admin Upload Image Error]:", error);
-    return { success: false, error: error.message || "Chyba při nahrávání obrázku." };
+    return { success: false, error: error.message || "Chyba při ukládání obrázku do databáze." };
   }
 }

@@ -129,6 +129,14 @@ model Product {
   updatedAt       DateTime @updatedAt
 }
 
+model UploadedImage {
+  id        String   @id @default(cuid())
+  filename  String
+  mimeType  String
+  data      Bytes
+  createdAt DateTime @default(now())
+}
+
 model StoreSetting {
   id                  String   @id @default("default")
   storeName           String   @default("MoodBox Bloom")
