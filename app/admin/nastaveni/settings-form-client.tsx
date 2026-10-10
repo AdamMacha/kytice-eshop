@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { updateStoreSettingsAction } from "@/actions/admin-settings";
 import { uploadProductImageAction } from "@/actions/admin-products";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,8 @@ import {
   ImageIcon,
   Loader2,
   AlertCircle,
+  FileText,
+  ExternalLink,
 } from "lucide-react";
 
 export function SettingsFormClient({ settings }: { settings: any }) {
@@ -304,6 +307,26 @@ export function SettingsFormClient({ settings }: { settings: any }) {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Box 5: Znění obchodních podmínek */}
+      <div className="p-6 bg-white rounded-3xl border border-[#E8D9CE] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-[#FAF7F4] flex items-center justify-center text-[#A87938] shrink-0">
+            <FileText className="w-5 h-5" />
+          </div>
+          <div>
+            <h4 className="text-sm font-bold text-[#4A3A31]">Znění obchodních podmínek</h4>
+            <p className="text-xs text-[#7D6B62]">Kompletní právní text na stránce /obchodni-podminky s editorem a živým náhledem</p>
+          </div>
+        </div>
+        <Link
+          href="/admin/obchodni-podminky"
+          className="px-4 py-2.5 rounded-xl text-xs font-semibold bg-[#F9ECEF] text-[#C88D9A] hover:bg-[#F3E7DF] transition flex items-center justify-center gap-1.5 shrink-0"
+        >
+          <span>Upravit podmínky</span>
+          <ExternalLink className="w-3.5 h-3.5" />
+        </Link>
       </div>
 
       <Button

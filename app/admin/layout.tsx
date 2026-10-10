@@ -12,7 +12,7 @@ import {
   Settings,
   ExternalLink,
   LogOut,
-  Sparkles,
+  FileText,
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -36,6 +36,7 @@ export default async function AdminLayout({
     { href: "/admin", label: "Přehled", icon: LayoutDashboard },
     { href: "/admin/objednavky", label: "Objednávky", icon: ShoppingBag },
     { href: "/admin/produkty", label: "Kytice & Ceník", icon: Flower2 },
+    { href: "/admin/obchodni-podminky", label: "Obchodní podmínky", icon: FileText },
     { href: "/admin/nastaveni", label: "Nastavení obchodu", icon: Settings },
   ];
 
