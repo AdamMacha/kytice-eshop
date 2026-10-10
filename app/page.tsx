@@ -18,13 +18,19 @@ import {
 } from "lucide-react";
 
 export default async function Home() {
-  const products = await db.product.findMany({
-    where: { inStock: true },
-    orderBy: { createdAt: "asc" },
-  });
+  const [products, storeSetting] = await Promise.all([
+    db.product.findMany({
+      where: { inStock: true },
+      orderBy: { createdAt: "asc" },
+    }),
+    db.storeSetting.findUnique({
+      where: { id: "default" },
+    }),
+  ]);
   
   const pinkEdition = products.find((p) => p.slug === "pink-edition");
   const heroPriceDisplay = pinkEdition ? formatCZKFromWhole(pinkEdition.price) : "999 Kč";
+  const heroImage = storeSetting?.heroImage || "/products/pink-edition.png";
 
   return (
     <div className="space-y-24 sm:space-y-32 pb-24">
@@ -103,8 +109,8 @@ export default async function Home() {
 
                 <div className="relative aspect-4/5 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/80 bg-white">
                   <Image
-                    src="/products/pink-edition.png"
-                    alt="Pink Edition kytice MoodBox"
+                    src={heroImage}
+                    alt="Kytice MoodBox"
                     fill
                     priority
                     className="object-cover"

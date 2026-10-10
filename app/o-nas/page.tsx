@@ -6,13 +6,20 @@ import { ROUTES } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Heart, Sparkles, Gift, ArrowRight } from "lucide-react";
 
+import { db } from "@/lib/db";
+
 export const metadata: Metadata = {
   title: "O nás – Příběh MoodBox Bloom",
   description:
     "MoodBox Bloom vznikl z lásky k tvoření a radosti z dárků, které mají smysl. Ručně tvořené sladké kytice od Kateřiny.",
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const storeSetting = await db.storeSetting.findUnique({
+    where: { id: "default" },
+  });
+  const aboutImage = storeSetting?.aboutImage || "/products/pink-edition.png";
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-16">
       {/* Intro Header */}
@@ -36,7 +43,7 @@ export default function AboutPage() {
         <div className="lg:col-span-5 relative">
           <div className="relative aspect-4/5 rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-[#F3E7DF]">
             <Image
-              src="/products/pink-edition.png"
+              src={aboutImage}
               alt="Kateřina tvoří kytice MoodBox"
               fill
               className="object-cover"

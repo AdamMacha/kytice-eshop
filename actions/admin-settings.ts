@@ -18,6 +18,8 @@ export async function updateStoreSettingsAction(formData: FormData) {
     const packetaPickupPrice = parseInt((formData.get("packetaPickupPrice") as string) || "89", 10);
     const packetaAddressPrice = parseInt((formData.get("packetaAddressPrice") as string) || "129", 10);
     const codFee = parseInt((formData.get("codFee") as string) || "30", 10);
+    const heroImage = (formData.get("heroImage") as string) || "/products/pink-edition.png";
+    const aboutImage = (formData.get("aboutImage") as string) || "/products/pink-edition.png";
 
     await db.storeSetting.upsert({
       where: { id: "default" },
@@ -29,6 +31,8 @@ export async function updateStoreSettingsAction(formData: FormData) {
         packetaPickupPrice,
         packetaAddressPrice,
         codFee,
+        heroImage,
+        aboutImage,
       },
       create: {
         id: "default",
@@ -39,10 +43,13 @@ export async function updateStoreSettingsAction(formData: FormData) {
         packetaPickupPrice,
         packetaAddressPrice,
         codFee,
+        heroImage,
+        aboutImage,
       },
     });
 
     revalidatePath("/");
+    revalidatePath("/o-nas");
     revalidatePath("/admin/nastaveni");
     return { success: true };
   } catch (error: any) {
