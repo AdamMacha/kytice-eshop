@@ -116,7 +116,7 @@ export function InvoiceListClient({ initialOrders }: InvoiceListClientProps) {
             <FileCheck className="w-4 h-4 text-[#A87938]" />
           </div>
           <div className="text-2xl font-bold text-[#C88D9A] font-serif">
-            {formatCZK(totalAmount)}
+            {formatCZK(totalAmount, false)}
           </div>
           <p className="text-[11px] text-[#A4948B]">Objem všech objednávek</p>
         </div>
@@ -127,7 +127,7 @@ export function InvoiceListClient({ initialOrders }: InvoiceListClientProps) {
             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
           </div>
           <div className="text-2xl font-bold text-emerald-800 font-serif">
-            {formatCZK(paidAmount)}
+            {formatCZK(paidAmount, false)}
           </div>
           <p className="text-[11px] text-emerald-700 font-medium">
             {paidOrders.length} zaplacených faktur
@@ -140,7 +140,7 @@ export function InvoiceListClient({ initialOrders }: InvoiceListClientProps) {
             <Clock className="w-4 h-4 text-amber-600" />
           </div>
           <div className="text-2xl font-bold text-amber-800 font-serif">
-            {formatCZK(pendingAmount)}
+            {formatCZK(pendingAmount, false)}
           </div>
           <p className="text-[11px] text-amber-700 font-medium">
             {pendingOrders.length} čeká na zaplacení či dobírku
@@ -296,7 +296,7 @@ export function InvoiceListClient({ initialOrders }: InvoiceListClientProps) {
 
                       {/* Částka */}
                       <td className="py-4 px-6 text-right font-serif font-bold text-sm text-[#4A3A31]">
-                        {formatCZK(order.totalPrice)}
+                        {formatCZK(order.totalPrice, false)}
                       </td>
 
                       {/* Tlačítka akcí */}

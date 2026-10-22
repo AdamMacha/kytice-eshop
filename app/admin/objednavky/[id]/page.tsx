@@ -93,7 +93,7 @@ export default async function AdminOrderDetailPage({
                 Celková částka
               </span>
               <span className="text-2xl font-bold text-[#C88D9A]">
-                {formatCZK(order.totalPrice)}
+                {formatCZK(order.totalPrice, false)}
               </span>
             </div>
             <a
@@ -297,7 +297,7 @@ export default async function AdminOrderDetailPage({
               </div>
               <div className="flex justify-between pt-1 border-t border-[#F0E4DC]">
                 <span className="text-[#7D6B62] font-semibold">Částka k úhradě:</span>
-                <span className="font-bold text-[#C88D9A]">{formatCZK(order.totalPrice)}</span>
+                <span className="font-bold text-[#C88D9A]">{formatCZK(order.totalPrice, false)}</span>
               </div>
             </div>
 

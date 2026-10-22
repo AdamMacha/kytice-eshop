@@ -99,7 +99,7 @@ export default async function AdminDashboardPage() {
             </div>
           </div>
           <p className="text-2xl sm:text-3xl font-bold text-[#4A3A31]">
-            {formatCZK(totalRevenueHalere)}
+            {formatCZK(totalRevenueHalere, false)}
           </p>
           <p className="text-[11px] text-[#A4948B]">Zaplacené a doručené objednávky</p>
         </div>
@@ -226,7 +226,7 @@ export default async function AdminDashboardPage() {
                         : "Zásilkovna (Adresa)"}
                     </td>
                     <td className="py-3.5 px-3 font-bold text-[#4A3A31]">
-                      {formatCZK(order.totalPrice)}
+                      {formatCZK(order.totalPrice, false)}
                     </td>
                     <td className="py-3.5 px-3">
                       <span

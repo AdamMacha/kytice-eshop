@@ -1,13 +1,15 @@
 /**
  * Format a price in haléře to CZK display string.
+ * @param halere Price in haléře (cents)
+ * @param allowFree If true, 0 is displayed as "Zdarma". Set false for financial/admin displays where 0 should be "0 Kč".
  * @example formatCZK(99900) => "999 Kč"
- * @example formatCZK(8900) => "89 Kč"
  * @example formatCZK(0) => "Zdarma"
+ * @example formatCZK(0, false) => "0 Kč"
  */
-export function formatCZK(halere: number): string {
-  if (halere === 0) return "Zdarma";
+export function formatCZK(halere: number, allowFree: boolean = true): string {
+  if (halere === 0 && allowFree) return "Zdarma";
 
-  const czk = halere / 100;
+  const czk = (halere || 0) / 100;
 
   return new Intl.NumberFormat("cs-CZ", {
     style: "currency",
@@ -19,17 +21,20 @@ export function formatCZK(halere: number): string {
 
 /**
  * Format a CZK whole number to display string.
+ * @param czk Price in whole CZK
+ * @param allowFree If true, 0 is displayed as "Zdarma". Set false for financial/admin displays where 0 should be "0 Kč".
  * @example formatCZKFromWhole(999) => "999 Kč"
+ * @example formatCZKFromWhole(0, false) => "0 Kč"
  */
-export function formatCZKFromWhole(czk: number): string {
-  if (czk === 0) return "Zdarma";
+export function formatCZKFromWhole(czk: number, allowFree: boolean = true): string {
+  if (czk === 0 && allowFree) return "Zdarma";
 
   return new Intl.NumberFormat("cs-CZ", {
     style: "currency",
     currency: "CZK",
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(czk);
+  }).format(czk || 0);
 }
 
 /**
