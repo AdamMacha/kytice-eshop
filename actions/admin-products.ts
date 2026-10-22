@@ -31,6 +31,8 @@ export async function toggleProductStockAction(slug: string, inStock: boolean) {
 
     revalidatePath("/");
     revalidatePath("/produkty");
+    revalidatePath("/kytice-mini");
+    revalidatePath("/boxy");
     revalidatePath(`/produkty/${slug}`);
     revalidatePath("/admin/produkty");
     return { success: true };
@@ -68,6 +70,8 @@ export async function updateProductPriceAction(slug: string, priceCZK: number) {
 
     revalidatePath("/");
     revalidatePath("/produkty");
+    revalidatePath("/kytice-mini");
+    revalidatePath("/boxy");
     revalidatePath(`/produkty/${slug}`);
     revalidatePath("/admin/produkty");
     return { success: true };
@@ -119,6 +123,8 @@ export async function upsertProductAction(data: any) {
 
     revalidatePath("/");
     revalidatePath("/produkty");
+    revalidatePath("/kytice-mini");
+    revalidatePath("/boxy");
     revalidatePath(`/produkty/${slug}`);
     revalidatePath("/admin/produkty");
     return { success: true, slug };

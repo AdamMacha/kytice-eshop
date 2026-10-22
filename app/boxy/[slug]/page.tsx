@@ -13,24 +13,7 @@ interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  try {
-    const products = await db.product.findMany({ select: { slug: true } });
-    if (products.length > 0) {
-      return products.map((product) => ({ slug: product.slug }));
-    }
-  } catch (err) {
-    console.warn("[generateStaticParams] Falling back to static slugs:", err);
-  }
-
-  return [
-    { slug: "pink-edition" },
-    { slug: "red-passion" },
-    { slug: "blue-dream" },
-    { slug: "magic-bloom" },
-    { slug: "golden-elegance" },
-  ];
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,

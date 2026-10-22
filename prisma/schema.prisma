@@ -162,6 +162,7 @@ model StoreSetting {
 
 enum ProductCategory {
   BOUQUET
+  MINI_BOUQUET
   BOX
 }
 

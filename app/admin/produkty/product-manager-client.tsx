@@ -111,9 +111,10 @@ function ProductFormModal({
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-gray-700">Kategorie</label>
-                <select name="category" value={formData.category || "BOUQUET"} onChange={handleChange} className="w-full p-2 border rounded-xl text-sm">
+                <label className="text-xs font-bold text-gray-700">Kategorie / Sekce</label>
+                <select name="category" value={formData.category || "BOUQUET"} onChange={handleChange} className="w-full p-2 border rounded-xl text-sm bg-white">
                   <option value="BOUQUET">Kytice</option>
+                  <option value="MINI_BOUQUET">Kytice mini</option>
                   <option value="BOX">Box</option>
                 </select>
               </div>
@@ -196,6 +197,7 @@ export function ProductManagerClient({
   
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<"ALL" | "BOUQUET" | "MINI_BOUQUET" | "BOX">("ALL");
 
   const handleToggleStock = async (slug: string, currentStock: boolean) => {
     setLoadingSlug(slug);
@@ -225,73 +227,146 @@ export function ProductManagerClient({
     setTimeout(() => setFeedback(null), 3000);
   };
 
+  const filteredProducts = products.filter((p) => {
+    if (selectedCategory === "ALL") return true;
+    return (p.category || "BOUQUET") === selectedCategory;
+  });
+
+  const bouquetCount = products.filter((p) => (p.category || "BOUQUET") === "BOUQUET").length;
+  const miniCount = products.filter((p) => p.category === "MINI_BOUQUET").length;
+  const boxCount = products.filter((p) => p.category === "BOX").length;
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        {feedback ? (
-          <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2 animate-fade-in flex-1 mr-4">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>{feedback}</span>
-          </div>
-        ) : <div className="flex-1" />}
-        
-        <Button variant="gold" onClick={() => setIsAddingNew(true)} className="shrink-0 flex items-center gap-2">
-          <Plus className="w-4 h-4" />
-          Přidat nový produkt
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {products.map((product) => (
-          <div
-            key={product.slug}
-            className={`p-6 bg-white rounded-3xl border shadow-xs flex flex-col justify-between space-y-5 transition relative ${
-              product.inStock
-                ? "border-[#E8D9CE]"
-                : "border-gray-200 opacity-60 bg-gray-50"
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        {/* Category Tabs */}
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setSelectedCategory("ALL")}
+            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition ${
+              selectedCategory === "ALL"
+                ? "bg-[#4A3A31] text-white shadow-xs"
+                : "bg-white text-[#7D6B62] border border-[#E8D9CE] hover:bg-[#F3E7DF]"
             }`}
           >
-            <button 
-              onClick={() => setEditingProduct(product)}
-              className="absolute top-8 right-8 z-10 p-2 bg-white/90 backdrop-blur rounded-full shadow hover:bg-gray-50 transition"
-              title="Upravit produkt"
+            Všechny sekce ({products.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedCategory("BOUQUET")}
+            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition ${
+              selectedCategory === "BOUQUET"
+                ? "bg-[#C88D9A] text-white shadow-xs"
+                : "bg-white text-[#7D6B62] border border-[#E8D9CE] hover:bg-[#F3E7DF]"
+            }`}
+          >
+            Kytice ({bouquetCount})
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedCategory("MINI_BOUQUET")}
+            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition ${
+              selectedCategory === "MINI_BOUQUET"
+                ? "bg-purple-600 text-white shadow-xs"
+                : "bg-white text-[#7D6B62] border border-[#E8D9CE] hover:bg-[#F3E7DF]"
+            }`}
+          >
+            Kytice mini ({miniCount})
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedCategory("BOX")}
+            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition ${
+              selectedCategory === "BOX"
+                ? "bg-[#D4AF7F] text-white shadow-xs"
+                : "bg-white text-[#7D6B62] border border-[#E8D9CE] hover:bg-[#F3E7DF]"
+            }`}
+          >
+            Boxy ({boxCount})
+          </button>
+        </div>
+
+        <div className="flex items-center gap-3">
+          {feedback && (
+            <div className="p-2.5 px-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2 animate-fade-in">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>{feedback}</span>
+            </div>
+          )}
+          
+          <Button variant="gold" onClick={() => setIsAddingNew(true)} className="shrink-0 flex items-center gap-2">
+            <Plus className="w-4 h-4" />
+            Přidat nový produkt
+          </Button>
+        </div>
+      </div>
+
+      {filteredProducts.length === 0 ? (
+        <div className="p-12 text-center bg-white rounded-3xl border border-[#E8D9CE] space-y-3">
+          <p className="text-sm font-bold text-[#4A3A31]">V této sekci zatím nejsou žádné produkty</p>
+          <p className="text-xs text-[#7D6B62]">
+            Můžete přidat nový produkt pomocí tlačítka výše, nebo upravit existující produkt a změnit jeho kategorii.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredProducts.map((product) => (
+            <div
+              key={product.slug}
+              className={`p-6 bg-white rounded-3xl border shadow-xs flex flex-col justify-between space-y-5 transition relative ${
+                product.inStock
+                  ? "border-[#E8D9CE]"
+                  : "border-gray-200 opacity-60 bg-gray-50"
+              }`}
             >
-              <Edit2 className="w-4 h-4 text-[#A87938]" />
-            </button>
+              <button 
+                onClick={() => setEditingProduct(product)}
+                className="absolute top-8 right-8 z-10 p-2 bg-white/90 backdrop-blur rounded-full shadow hover:bg-gray-50 transition"
+                title="Upravit produkt"
+              >
+                <Edit2 className="w-4 h-4 text-[#A87938]" />
+              </button>
 
-            <div className="space-y-4">
-              {/* Image & Stock Badge */}
-              <div className="relative aspect-4/5 w-full rounded-2xl overflow-hidden bg-[#F3E7DF]">
-                <Image
-                  src={product.image || "/products/pink-edition.png"}
-                  alt={product.name}
-                  fill
-                  className="object-cover"
-                />
-                <span
-                  className={`absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold shadow-xs ${
-                    product.inStock
-                      ? "bg-emerald-100 text-emerald-800"
-                      : "bg-red-100 text-red-800"
-                  }`}
-                >
-                  {product.inStock ? "Aktivní v prodeji" : "Nedostupné"}
-                </span>
-              </div>
-
-              {/* Title & Subtitle */}
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className={`text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full ${product.category === 'BOX' ? 'bg-[#D4AF7F]/20 text-[#A87938]' : 'bg-[#C88D9A]/20 text-[#A84A5C]'}`}>
-                    {product.category === 'BOX' ? 'Box' : 'Kytice'}
-                  </span>
-                  <span className="text-[10px] uppercase font-bold tracking-wider text-[#A87938]">
-                    {product.subtitle}
+              <div className="space-y-4">
+                {/* Image & Stock Badge */}
+                <div className="relative aspect-4/5 w-full rounded-2xl overflow-hidden bg-[#F3E7DF]">
+                  <Image
+                    src={product.image || "/products/pink-edition.png"}
+                    alt={product.name}
+                    fill
+                    className="object-cover"
+                  />
+                  <span
+                    className={`absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold shadow-xs ${
+                      product.inStock
+                        ? "bg-emerald-100 text-emerald-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {product.inStock ? "Aktivní v prodeji" : "Nedostupné"}
                   </span>
                 </div>
-                <h3 className="font-serif text-lg font-bold text-[#4A3A31]">
-                  {product.name}
-                </h3>
+
+                {/* Title & Subtitle */}
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className={`text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full ${
+                      product.category === 'BOX'
+                        ? 'bg-[#D4AF7F]/20 text-[#A87938]'
+                        : product.category === 'MINI_BOUQUET'
+                        ? 'bg-purple-100 text-purple-700'
+                        : 'bg-[#C88D9A]/20 text-[#A84A5C]'
+                    }`}>
+                      {product.category === 'BOX' ? 'Box' : product.category === 'MINI_BOUQUET' ? 'Kytice mini' : 'Kytice'}
+                    </span>
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#A87938]">
+                      {product.subtitle}
+                    </span>
+                  </div>
+                  <h3 className="font-serif text-lg font-bold text-[#4A3A31]">
+                    {product.name}
+                  </h3>
                 <p className="text-xs text-[#7D6B62] mt-1 line-clamp-2">
                   {product.description}
                 </p>
@@ -332,6 +407,7 @@ export function ProductManagerClient({
           </div>
         ))}
       </div>
+      )}
 
       {(editingProduct || isAddingNew) && (
         <ProductFormModal 

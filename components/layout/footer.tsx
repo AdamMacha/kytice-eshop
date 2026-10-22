@@ -56,6 +56,22 @@ export function Footer() {
               </li>
               <li>
                 <Link
+                  href={ROUTES.mini}
+                  className="hover:text-white hover:underline transition"
+                >
+                  Kytice mini
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={ROUTES.boxes}
+                  className="hover:text-white hover:underline transition"
+                >
+                  Dárkové boxy
+                </Link>
+              </li>
+              <li>
+                <Link
                   href={ROUTES.about}
                   className="hover:text-white hover:underline transition"
                 >

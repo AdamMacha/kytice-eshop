@@ -13,24 +13,7 @@ interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  try {
-    const products = await db.product.findMany({ select: { slug: true } });
-    if (products.length > 0) {
-      return products.map((product) => ({ slug: product.slug }));
-    }
-  } catch (err) {
-    console.warn("[generateStaticParams] Falling back to static slugs:", err);
-  }
-
-  return [
-    { slug: "pink-edition" },
-    { slug: "red-passion" },
-    { slug: "blue-dream" },
-    { slug: "magic-bloom" },
-    { slug: "golden-elegance" },
-  ];
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -75,10 +58,20 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         </Link>
         <ChevronRight className="w-3.5 h-3.5" />
         <Link
-          href={ROUTES.products}
+          href={
+            product.category === "MINI_BOUQUET"
+              ? ROUTES.mini
+              : product.category === "BOX"
+              ? ROUTES.boxes
+              : ROUTES.products
+          }
           className="hover:text-[#C88D9A] transition"
         >
-          Kytice
+          {product.category === "MINI_BOUQUET"
+            ? "Kytice mini"
+            : product.category === "BOX"
+            ? "Boxy"
+            : "Kytice"}
         </Link>
         <ChevronRight className="w-3.5 h-3.5" />
         <span className="font-semibold text-[#4A3A31]">{product.name}</span>
