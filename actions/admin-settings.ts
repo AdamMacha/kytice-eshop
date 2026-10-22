@@ -21,6 +21,9 @@ export async function updateStoreSettingsAction(formData: FormData) {
     const packetaAddressPrice = parseInt((formData.get("packetaAddressPrice") as string) || "129", 10);
     const codFee = parseInt((formData.get("codFee") as string) || "30", 10);
     const heroImage = (formData.get("heroImage") as string) || "/products/pink-edition.png";
+    const heroTitle = (formData.get("heroTitle") as string) || "Pink Edition";
+    const heroSubtitle = (formData.get("heroSubtitle") as string) || "Se šumivým vínem & Raffaelo";
+    const heroPrice = (formData.get("heroPrice") as string) || "999 Kč";
     const aboutImage = (formData.get("aboutImage") as string) || "/products/pink-edition.png";
 
     await db.storeSetting.upsert({
@@ -36,6 +39,9 @@ export async function updateStoreSettingsAction(formData: FormData) {
         packetaAddressPrice,
         codFee,
         heroImage,
+        heroTitle,
+        heroSubtitle,
+        heroPrice,
         aboutImage,
       },
       create: {
@@ -50,6 +56,9 @@ export async function updateStoreSettingsAction(formData: FormData) {
         packetaAddressPrice,
         codFee,
         heroImage,
+        heroTitle,
+        heroSubtitle,
+        heroPrice,
         aboutImage,
       },
     });

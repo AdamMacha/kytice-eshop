@@ -29,8 +29,12 @@ export default async function Home() {
   ]);
   
   const pinkEdition = products.find((p) => p.slug === "pink-edition");
-  const heroPriceDisplay = pinkEdition ? formatCZKFromWhole(pinkEdition.price) : "999 Kč";
   const heroImage = storeSetting?.heroImage || "/products/pink-edition.png";
+  const heroTitle = storeSetting?.heroTitle || "Pink Edition";
+  const heroSubtitle = storeSetting?.heroSubtitle || "Se šumivým vínem & Raffaelo";
+  const heroPriceDisplay =
+    storeSetting?.heroPrice ||
+    (pinkEdition ? formatCZKFromWhole(pinkEdition.price) : "999 Kč");
 
   return (
     <div className="space-y-24 sm:space-y-32 pb-24">
@@ -124,10 +128,10 @@ export default async function Home() {
                         Bestseller
                       </span>
                       <h4 className="font-serif font-bold text-base text-[#4A3A31]">
-                        Pink Edition
+                        {heroTitle}
                       </h4>
                       <p className="text-xs text-[#7D6B62]">
-                        Se šumivým vínem & Raffaelo
+                        {heroSubtitle}
                       </p>
                     </div>
                     <span className="font-bold text-base text-[#C88D9A]">

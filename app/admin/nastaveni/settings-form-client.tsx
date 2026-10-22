@@ -28,6 +28,15 @@ export function SettingsFormClient({ settings }: { settings: any }) {
   const [heroImage, setHeroImage] = useState<string>(
     settings.heroImage || "/products/pink-edition.png"
   );
+  const [heroTitle, setHeroTitle] = useState<string>(
+    settings.heroTitle || "Pink Edition"
+  );
+  const [heroSubtitle, setHeroSubtitle] = useState<string>(
+    settings.heroSubtitle || "Se šumivým vínem & Raffaelo"
+  );
+  const [heroPrice, setHeroPrice] = useState<string>(
+    settings.heroPrice || "999 Kč"
+  );
   const [aboutImage, setAboutImage] = useState<string>(
     settings.aboutImage || "/products/pink-edition.png"
   );
@@ -226,6 +235,25 @@ export function SettingsFormClient({ settings }: { settings: any }) {
                   Žádný obrázek
                 </div>
               )}
+
+              {/* Badge Preview */}
+              <div className="absolute bottom-2 left-2 right-2 p-2 rounded-xl bg-white/95 backdrop-blur-md border border-[#E8D9CE] shadow-sm flex items-center justify-between text-[9px] pointer-events-none">
+                <div className="leading-tight overflow-hidden mr-1">
+                  <span className="text-[7px] uppercase font-bold tracking-wider text-[#A87938] block">
+                    Bestseller
+                  </span>
+                  <div className="font-serif font-bold text-[#4A3A31] truncate">
+                    {heroTitle || "Pink Edition"}
+                  </div>
+                  <div className="text-[7px] text-[#7D6B62] truncate">
+                    {heroSubtitle || "Se šumivým vínem & Raffaelo"}
+                  </div>
+                </div>
+                <span className="font-bold text-[#C88D9A] text-[9px] shrink-0">
+                  {heroPrice || "999 Kč"}
+                </span>
+              </div>
+
               {uploadingHero && (
                 <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-white text-xs gap-1 backdrop-blur-xs">
                   <Loader2 className="w-5 h-5 animate-spin" />
@@ -254,6 +282,54 @@ export function SettingsFormClient({ settings }: { settings: any }) {
                   onChange={(e) => setHeroImage(e.target.value)}
                   className="w-full p-2 border rounded-xl text-xs bg-white"
                   placeholder="/products/pink-edition.png nebo URL"
+                />
+              </div>
+            </div>
+
+            {/* Bestseller text & price customization */}
+            <div className="space-y-3 pt-3 border-t border-[#E8D9CE]">
+              <div>
+                <label className="text-xs font-semibold text-[#4A3A31] block mb-1">
+                  Název kytice (Bestseller na úvodu)
+                </label>
+                <input
+                  type="text"
+                  name="heroTitle"
+                  value={heroTitle}
+                  onChange={(e) => setHeroTitle(e.target.value)}
+                  className="w-full p-2.5 border border-[#E8D9CE] rounded-xl text-xs bg-white focus:ring-2 focus:ring-[#C88D9A] outline-none"
+                  placeholder="např. Pink Edition nebo Magic Bloom"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-[#4A3A31] block mb-1">
+                  Podtitul / Krátký popis
+                </label>
+                <input
+                  type="text"
+                  name="heroSubtitle"
+                  value={heroSubtitle}
+                  onChange={(e) => setHeroSubtitle(e.target.value)}
+                  className="w-full p-2.5 border border-[#E8D9CE] rounded-xl text-xs bg-white focus:ring-2 focus:ring-[#C88D9A] outline-none"
+                  placeholder="např. Se šumivým vínem & Raffaelo"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-[#4A3A31] block mb-1">
+                  Zobrazená cena
+                </label>
+                <input
+                  type="text"
+                  name="heroPrice"
+                  value={heroPrice}
+                  onChange={(e) => setHeroPrice(e.target.value)}
+                  className="w-full p-2.5 border border-[#E8D9CE] rounded-xl text-xs bg-white focus:ring-2 focus:ring-[#C88D9A] outline-none"
+                  placeholder="např. 999 Kč"
+                  required
                 />
               </div>
             </div>
