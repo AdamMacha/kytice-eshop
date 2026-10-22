@@ -29,7 +29,6 @@ export default async function AdminDashboardPage() {
     orders = await db.order.findMany({
       orderBy: { createdAt: "desc" },
       include: { items: true },
-      take: 20,
     });
   } catch {
     orders = [];
@@ -37,19 +36,27 @@ export default async function AdminDashboardPage() {
 
   // Calculate KPIs
   const totalOrders = orders.length;
-  const totalRevenueHalere = orders
-    .filter((o) => o.status === "PAID" || o.status === "DELIVERED")
-    .reduce((sum, o) => sum + o.totalPrice, 0);
+  const paidOrders = orders.filter(
+    (o) =>
+      o.paymentStatus === "PAID" ||
+      o.paymentStatus === "COD_COLLECTED" ||
+      o.status === "PAID" ||
+      o.status === "DELIVERED"
+  );
+  const totalRevenueHalere = paidOrders.reduce((sum, o) => sum + o.totalPrice, 0);
 
   const pendingOrders = orders.filter(
     (o) =>
       o.status === "PENDING" ||
       o.status === "AWAITING_PAYMENT" ||
+      o.status === "PAID" ||
       o.status === "PROCESSING"
   );
   const shippedOrders = orders.filter(
     (o) => o.status === "SHIPPED" || o.status === "DELIVERED"
   );
+
+  const recentOrders = orders.slice(0, 10);
 
   return (
     <div className="space-y-10">
@@ -188,7 +195,7 @@ export default async function AdminDashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#F0E4DC]">
-                {orders.map((order) => (
+                {recentOrders.map((order) => (
                   <tr key={order.id} className="hover:bg-[#FDFBF7] transition">
                     <td className="py-3.5 px-3 font-mono font-bold text-[#4A3A31]">
                       {order.orderNumber}
