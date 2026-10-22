@@ -8,6 +8,7 @@ import { logoutAdminAction } from "@/actions/admin-auth";
 import {
   LayoutDashboard,
   ShoppingBag,
+  Receipt,
   Flower2,
   Settings,
   ExternalLink,
@@ -35,6 +36,7 @@ export default async function AdminLayout({
   const navItems = [
     { href: "/admin", label: "Přehled", icon: LayoutDashboard },
     { href: "/admin/objednavky", label: "Objednávky", icon: ShoppingBag },
+    { href: "/admin/faktury", label: "Faktury", icon: Receipt },
     { href: "/admin/produkty", label: "Kytice & Ceník", icon: Flower2 },
     { href: "/admin/obchodni-podminky", label: "Obchodní podmínky", icon: FileText },
     { href: "/admin/nastaveni", label: "Nastavení obchodu", icon: Settings },

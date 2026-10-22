@@ -3,7 +3,7 @@ import Link from "next/link";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { redirect, notFound } from "next/navigation";
 import { db } from "@/lib/db";
-import { formatCZK, formatDateTime } from "@/lib/format";
+import { formatCZK, formatDateTime, formatDate } from "@/lib/format";
 import { ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from "@/types/order";
 import { OrderDetailAdminClient } from "./order-detail-admin-client";
 import {
@@ -15,6 +15,8 @@ import {
   MessageSquare,
   Clock,
   Wine,
+  Receipt,
+  Download,
 } from "lucide-react";
 
 interface AdminOrderDetailPageProps {
@@ -85,13 +87,24 @@ export default async function AdminOrderDetailPage({
             </p>
           </div>
 
-          <div className="text-right">
-            <span className="text-xs text-[#7D6B62] uppercase tracking-wider block">
-              Celková částka
-            </span>
-            <span className="text-2xl font-bold text-[#C88D9A]">
-              {formatCZK(order.totalPrice)}
-            </span>
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="text-right">
+              <span className="text-xs text-[#7D6B62] uppercase tracking-wider block">
+                Celková částka
+              </span>
+              <span className="text-2xl font-bold text-[#C88D9A]">
+                {formatCZK(order.totalPrice)}
+              </span>
+            </div>
+            <a
+              href={`/api/admin/orders/${order.id}/invoice`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#C88D9A] hover:bg-[#B36879] text-white font-bold text-xs transition shadow-xs"
+            >
+              <Download className="w-4 h-4" />
+              <span>Faktura (PDF)</span>
+            </a>
           </div>
         </div>
       </div>
@@ -244,6 +257,60 @@ export default async function AdminOrderDetailPage({
                   </span>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Invoice card */}
+          <div className="p-6 bg-white rounded-3xl border border-[#E8D9CE] shadow-xs space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm font-bold text-[#4A3A31]">
+                <Receipt className="w-4 h-4 text-[#C88D9A]" />
+                <span>Faktura / Daňový doklad</span>
+              </div>
+              <span className="text-[11px] font-semibold text-[#7D6B62]">
+                Číslo: {order.orderNumber}
+              </span>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-[#FDFBF7] border border-[#F0E4DC] space-y-2 text-xs">
+              <div className="flex justify-between">
+                <span className="text-[#7D6B62]">Dodavatel:</span>
+                <span className="font-bold text-[#4A3A31]">Kateřina Janovská</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[#7D6B62]">Odběratel:</span>
+                <span className="font-medium text-[#4A3A31]">
+                  {order.firstName} {order.lastName}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[#7D6B62]">Datum vystavení:</span>
+                <span className="font-medium text-[#4A3A31]">
+                  {formatDate(new Date(order.createdAt))}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[#7D6B62]">Způsob úhrady:</span>
+                <span className="font-medium text-[#4A3A31]">
+                  {order.paymentMethod === "STRIPE_CARD" ? "Online platební karta" : "Dobírka"}
+                </span>
+              </div>
+              <div className="flex justify-between pt-1 border-t border-[#F0E4DC]">
+                <span className="text-[#7D6B62] font-semibold">Částka k úhradě:</span>
+                <span className="font-bold text-[#C88D9A]">{formatCZK(order.totalPrice)}</span>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2 pt-1">
+              <a
+                href={`/api/admin/orders/${order.id}/invoice`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-[#C88D9A] hover:bg-[#B36879] text-white font-bold text-xs transition shadow-xs"
+              >
+                <Download className="w-4 h-4" />
+                <span>Otevřít / Stáhnout fakturu (PDF)</span>
+              </a>
             </div>
           </div>
 

@@ -14,6 +14,7 @@ import {
   Eye,
   Truck,
   Sparkles,
+  Receipt,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -62,12 +63,20 @@ export default async function AdminDashboardPage() {
             Přehled e-shopu MoodBox Bloom
           </h1>
         </div>
-        <Link href="/admin/objednavky">
-          <Button variant="primary" size="sm">
-            Zobrazit všechny objednávky
-            <ArrowRight className="w-4 h-4 ml-1.5" />
-          </Button>
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link href="/admin/faktury">
+            <Button variant="outline" size="sm">
+              <Receipt className="w-4 h-4 mr-1.5 text-[#C88D9A]" />
+              Faktury
+            </Button>
+          </Link>
+          <Link href="/admin/objednavky">
+            <Button variant="primary" size="sm">
+              Objednávky
+              <ArrowRight className="w-4 h-4 ml-1.5" />
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* KPI Cards Grid */}
