@@ -214,7 +214,7 @@ export async function createOrder(
       // Generate Invoice PDF for COD
       const { generateInvoice } = await import("@/lib/pdf");
       const storeSetting = await db.storeSetting.findFirst() || {
-        storeName: "MoodBox Bloom",
+        storeName: "Kateřina Janovská",
         address: "Hlavní 28, Průhonice 25243",
         ico: "23965878",
         email: "moodboxcz@gmail.com",

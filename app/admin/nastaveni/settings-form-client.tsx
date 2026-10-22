@@ -94,11 +94,21 @@ export function SettingsFormClient({ settings }: { settings: any }) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
+            label="Jméno dodavatele na faktuře (OSVČ)"
+            name="storeName"
+            defaultValue={settings.storeName || "Kateřina Janovská"}
+            placeholder="např. Kateřina Janovská"
+            required
+          />
+          <Input
             label="Telefon pro zákazníky"
             name="phone"
             defaultValue={settings.phone || "776 208 814"}
             required
           />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
             label="Email obchodu"
             name="email"
@@ -106,19 +116,19 @@ export function SettingsFormClient({ settings }: { settings: any }) {
             defaultValue={settings.email || "moodboxcz@gmail.com"}
             required
           />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Input
-            label="Fakturační adresa"
-            name="address"
-            defaultValue={settings.address || "Hlavní 28, Průhonice 25243"}
-            required
-          />
           <Input
             label="IČO"
             name="ico"
             defaultValue={settings.ico || "23965878"}
+            required
+          />
+        </div>
+
+        <div>
+          <Input
+            label="Fakturační adresa"
+            name="address"
+            defaultValue={settings.address || "Hlavní 28, Průhonice 25243"}
             required
           />
         </div>

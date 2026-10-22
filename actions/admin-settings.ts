@@ -11,9 +11,11 @@ export async function updateStoreSettingsAction(formData: FormData) {
   }
 
   try {
+    const storeName = (formData.get("storeName") as string) || "Kateřina Janovská";
     const phone = (formData.get("phone") as string) || "776 208 814";
     const email = (formData.get("email") as string) || "moodboxcz@gmail.com";
     const address = (formData.get("address") as string) || "Hlavní 28, Průhonice 25243";
+    const ico = (formData.get("ico") as string) || "23965878";
     const announcement = (formData.get("announcement") as string) || "";
     const packetaPickupPrice = parseInt((formData.get("packetaPickupPrice") as string) || "89", 10);
     const packetaAddressPrice = parseInt((formData.get("packetaAddressPrice") as string) || "129", 10);
@@ -24,9 +26,11 @@ export async function updateStoreSettingsAction(formData: FormData) {
     await db.storeSetting.upsert({
       where: { id: "default" },
       update: {
+        storeName,
         phone,
         email,
         address,
+        ico,
         announcement,
         packetaPickupPrice,
         packetaAddressPrice,
@@ -36,9 +40,11 @@ export async function updateStoreSettingsAction(formData: FormData) {
       },
       create: {
         id: "default",
+        storeName,
         phone,
         email,
         address,
+        ico,
         announcement,
         packetaPickupPrice,
         packetaAddressPrice,

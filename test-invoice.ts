@@ -3,33 +3,33 @@ import { sendEmail } from "./lib/email";
 
 async function run() {
   const mockOrder = {
-    orderNumber: "MB-2026-TEST",
+    orderNumber: "MB-2026-32518",
     createdAt: new Date(),
-    firstName: "Test",
-    lastName: "Zákazník",
-    billingStreet: "Testovací 123",
-    billingCity: "Praha",
-    billingZip: "11000",
+    firstName: "Kateřina",
+    lastName: "Janovská",
+    billingStreet: "Hlavní 28",
+    billingCity: "Průhonice",
+    billingZip: "252 43",
     billingCountry: "CZ",
-    email: "spartak123@email.cz",
-    phone: "123456789",
+    email: "katerina.janovska@nadaniadovednosti.cz",
+    phone: "776 208 814",
     paymentMethod: "STRIPE_CARD",
     shippingMethod: "PRAGUE_DELIVERY",
     shippingPrice: 0,
     codFee: 0,
-    totalPrice: 199800,
+    totalPrice: 1500,
     items: [
       {
-        productName: "Pink Edition Kytice",
-        quantity: 2,
-        unitPrice: 99900,
-        totalPrice: 199800,
+        productName: "Blue Dream",
+        quantity: 1,
+        unitPrice: 1500,
+        totalPrice: 1500,
       }
     ]
   };
 
   const storeSettings = {
-    storeName: "MoodBox Bloom",
+    storeName: "Kateřina Janovská",
     address: "Hlavní 28, Průhonice 25243",
     ico: "23965878",
     email: "moodboxcz@gmail.com",

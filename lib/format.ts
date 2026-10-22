@@ -33,6 +33,21 @@ export function formatCZKFromWhole(czk: number): string {
 }
 
 /**
+ * Format a price in haléře specifically for invoices (e.g. 1500 => "15 Kč", 0 => "0 Kč").
+ * @example formatInvoicePrice(1500) => "15 Kč"
+ * @example formatInvoicePrice(0) => "0 Kč"
+ */
+export function formatInvoicePrice(halere: number): string {
+  const czk = (halere || 0) / 100;
+  return new Intl.NumberFormat("cs-CZ", {
+    style: "currency",
+    currency: "CZK",
+    minimumFractionDigits: czk % 1 === 0 ? 0 : 2,
+    maximumFractionDigits: 2,
+  }).format(czk).replace(/\u00A0/g, " ");
+}
+
+/**
  * Format a Czech phone number for display.
  * @example formatPhone("776208814") => "+420 776 208 814"
  */
