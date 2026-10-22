@@ -19,6 +19,7 @@ import {
   MessageSquare,
   AlertCircle,
   Trash2,
+  FileText,
 } from "lucide-react";
 
 export function OrderDetailAdminClient({ order }: { order: any }) {
@@ -214,6 +215,16 @@ export function OrderDetailAdminClient({ order }: { order: any }) {
               <Printer className="w-3.5 h-3.5 mr-1" />
               Tisk objednávky
             </Button>
+
+            <a
+              href={`/api/admin/orders/${order.id}/invoice`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center font-medium rounded-2xl transition duration-200 border border-[#E8D9CE] bg-white text-[#4A3A31] hover:bg-[#FDFBF7] px-3 py-1.5 text-xs shadow-xs"
+            >
+              <FileText className="w-3.5 h-3.5 mr-1 text-[#C88D9A]" />
+              Faktura (PDF)
+            </a>
           </div>
 
           {/* Danger Zone: Delete order */}
