@@ -4,6 +4,7 @@ import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import path from "path";
+import sharp from "sharp";
 
 export async function toggleProductStockAction(slug: string, inStock: boolean) {
   const isAuth = await isAdminAuthenticated();
@@ -150,7 +151,7 @@ export async function uploadProductImageAction(formData: FormData) {
       return { success: false, error: "Velikost obrázku nesmí překročit 8 MB." };
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
+    let buffer: Buffer = Buffer.from(await file.arrayBuffer());
     let mimeType = file.type;
     if (!mimeType || !mimeType.startsWith("image/")) {
       const ext = path.extname(file.name).toLowerCase();
@@ -161,11 +162,32 @@ export async function uploadProductImageAction(formData: FormData) {
       else mimeType = "image/jpeg";
     }
 
+    let filename = file.name;
+    if (mimeType !== "image/svg+xml" && mimeType !== "image/gif") {
+      try {
+        buffer = await sharp(buffer)
+          .rotate()
+          .resize({
+            width: 1200,
+            height: 1500,
+            fit: "inside",
+            withoutEnlargement: true,
+          })
+          .webp({ quality: 82 })
+          .toBuffer();
+        mimeType = "image/webp";
+        const baseName = path.basename(file.name, path.extname(file.name));
+        filename = `${baseName}.webp`;
+      } catch (optimizeErr) {
+        console.warn("[Admin Upload Image Optimize Fallback]:", optimizeErr);
+      }
+    }
+
     const saved = await db.uploadedImage.create({
       data: {
-        filename: file.name,
+        filename,
         mimeType,
-        data: buffer,
+        data: new Uint8Array(buffer),
       },
     });
 
