@@ -6,8 +6,18 @@ import { DEFAULT_TERMS_MARKDOWN } from "@/data/default-terms";
 import ReactMarkdown from "react-markdown";
 
 export const metadata: Metadata = {
-  title: "Obchodní podmínky – MoodBox Bloom",
-  description: "Všeobecné obchodní podmínky e-shopu MoodBox Bloom.",
+  title: "Obchodní podmínky a doprava",
+  description:
+    "Všeobecné obchodní podmínky a pravidla nákupu v internetovém obchodě MoodBox Bloom.",
+  alternates: {
+    canonical: "/obchodni-podminky",
+  },
+  openGraph: {
+    title: "Obchodní podmínky a doprava | MoodBox Bloom",
+    description:
+      "Všeobecné obchodní podmínky a pravidla nákupu v internetovém obchodě MoodBox Bloom.",
+    url: "/obchodni-podminky",
+  },
 };
 
 export default async function TermsPage() {

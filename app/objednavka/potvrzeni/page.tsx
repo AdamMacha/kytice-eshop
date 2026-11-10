@@ -17,6 +17,10 @@ import {
 export const metadata: Metadata = {
   title: "Objednávka potvrzena",
   description: "Děkujeme za vaši objednávku v e-shopu MoodBox Bloom.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 import { ClearCartOnSuccess } from "./clear-cart-on-success";

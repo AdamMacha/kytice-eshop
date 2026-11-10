@@ -7,6 +7,7 @@ import { Footer } from "@/components/layout/footer";
 import { AgeGateModal } from "@/components/shared/age-gate-modal";
 import { CookieConsent } from "@/components/shared/cookie-consent";
 import { BRAND } from "@/lib/constants";
+import { getWebSiteSchema, getStoreSchema } from "@/lib/schema";
 
 const playfair = Playfair_Display({
   subsets: ["latin", "latin-ext"],
@@ -20,46 +21,85 @@ const jakarta = Plus_Jakarta_Sans({
   display: "swap",
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.moodbox.cz";
+
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL || "https://www.moodbox.cz"
-  ),
+  metadataBase: new URL(siteUrl),
   title: {
     template: "%s | MoodBox Bloom",
     default: "MoodBox Bloom | Originální sladké kytice a dárkové boxy",
   },
   description:
-    "Originální ručně tvořené sladké kytice a dárkové boxy s prémiovou čokoládou a alkoholem. Doprava po Praze zdarma i po celé ČR přes Zásilkovnu.",
+    "Originální ručně tvořené sladké kytice a dárkové boxy s prémiovou čokoládou a alkoholem. Osobní rozvoz po Praze zdarma a bezpečné doručení po celé ČR přes Zásilkovnu.",
   keywords: [
     "čokokytice",
     "sladké kytice",
-    "dárkové boxy",
-    "dárek pro ženy",
     "kytice z čokolády",
+    "čokoládové kytice",
+    "dárkové boxy",
     "kytice s alkoholem",
+    "kytice s vínem",
+    "kytice s proseccem",
+    "dárek pro ženy",
+    "dárek pro muže",
+    "originální dárky",
+    "dárek k narozeninám",
+    "dárek k výročí",
+    "rozvoz kytic Praha",
     "MoodBox Bloom",
     "Praha",
   ],
-  authors: [{ name: BRAND.owner }],
+  authors: [{ name: BRAND.owner, url: siteUrl }],
   creator: BRAND.name,
+  publisher: BRAND.name,
+  applicationName: "MoodBox Bloom",
+  alternates: {
+    canonical: "./",
+    languages: {
+      "cs-CZ": siteUrl,
+    },
+  },
   openGraph: {
     type: "website",
     locale: "cs_CZ",
-    url: "https://www.moodbox.cz",
+    url: siteUrl,
     siteName: BRAND.name,
-    title: "MoodBox Bloom | Originální sladké kytice",
-    description: BRAND.tagline,
+    title: "MoodBox Bloom | Originální sladké kytice a dárkové boxy",
+    description:
+      "Ručně tvořené sladké kytice a dárkové boxy s prémiovou čokoládou a alkoholem. Osobní doručení po Praze zdarma i po celé ČR přes Zásilkovnu.",
     images: [
       {
         url: "/products/pink-edition.png",
         width: 1200,
         height: 630,
-        alt: "MoodBox Bloom Kytice",
+        alt: "MoodBox Bloom – Sladké kytice s alkoholem a čokoládou",
       },
     ],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "MoodBox Bloom | Originální sladké kytice a dárkové boxy",
+    description:
+      "Ručně tvořené sladké kytice a dárkové boxy s prémiovou čokoládou a alkoholem. Doprava po Praze zdarma.",
+    images: ["/products/pink-edition.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   icons: {
-    icon: "/logo.png",
+    icon: [
+      { url: "/icon.png", type: "image/png" },
+      { url: "/logo.png", type: "image/png" },
+    ],
+    apple: [{ url: "/icon.png", sizes: "180x180", type: "image/png" }],
   },
 };
 
@@ -74,11 +114,19 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const structuredData = [getWebSiteSchema(), getStoreSchema()];
+
   return (
     <html
       lang="cs"
       className={`${playfair.variable} ${jakarta.variable} scroll-smooth`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+      </head>
       <body className="min-h-screen flex flex-col antialiased selection:bg-[#EBC3CC] selection:text-[#4A3A31]">
         <CartProvider>
           <AgeGateModal />

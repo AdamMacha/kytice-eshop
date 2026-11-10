@@ -32,7 +32,7 @@ export function ProductCard({ product }: { product: Product }) {
       >
         <Image
           src={product.image}
-          alt={product.name}
+          alt={`${product.name} – sladká kytice s čokoládou a alkoholem`}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover object-center transition-transform duration-500 group-hover:scale-108"

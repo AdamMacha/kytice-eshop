@@ -24,6 +24,10 @@ interface OrderTrackingPageProps {
 export const metadata: Metadata = {
   title: "Sledování stavu objednávky",
   description: "Zkontrolujte aktuální stav vaší objednávky v e-shopu MoodBox Bloom.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default async function OrderTrackingPage({

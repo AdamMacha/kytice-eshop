@@ -3,16 +3,39 @@ import type { Metadata } from "next";
 import { BRAND } from "@/lib/constants";
 import { ContactForm } from "./contact-form";
 import { MapPin, Phone, Mail, Clock, Sparkles } from "lucide-react";
+import { getBreadcrumbSchema } from "@/lib/schema";
 
 export const metadata: Metadata = {
-  title: "Kontakt",
+  title: "Kontakt & Kde nás najdete",
   description:
-    "Máte dotaz nebo přání na úpravu kytice na míru? Kontaktujte Kateřinu z MoodBox Bloom.",
+    "Máte dotaz nebo přání na úpravu sladké kytice na míru? Kontaktujte Kateřinu z MoodBox Bloom na tel. +420 776 208 814 nebo přes kontaktní formulář.",
+  alternates: {
+    canonical: "/kontakt",
+  },
+  openGraph: {
+    title: "Kontakt & Kde nás najdete | MoodBox Bloom",
+    description:
+      "Rádi vám pomůžeme s výběrem té pravé kytice nebo připravíme dárkový box na míru. Osobní přístup a rychlá domluva.",
+    url: "/kontakt",
+  },
 };
 
 export default function ContactPage() {
+  const breadcrumbsSchema = getBreadcrumbSchema([
+    { name: "Domů", url: "/" },
+    { name: "Kontakt", url: "/kontakt" },
+  ]);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-16">
+      {/* Schema.org BreadcrumbList */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbsSchema),
+        }}
+      />
+
       {/* Header */}
       <div className="text-center max-w-2xl mx-auto space-y-3">
         <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white border border-[#E8D9CE] text-xs font-semibold text-[#A87938]">
@@ -33,9 +56,9 @@ export default function ContactPage() {
         {/* Left: Contact Details Cards */}
         <div className="lg:col-span-5 space-y-6">
           <div className="p-8 rounded-3xl bg-white border border-[#E8D9CE] shadow-xs space-y-6">
-            <h3 className="font-serif text-xl font-bold text-[#4A3A31]">
+            <h2 className="font-serif text-xl font-bold text-[#4A3A31]">
               Kontaktní údaje
-            </h3>
+            </h2>
 
             <div className="space-y-4 text-sm text-[#7D6B62]">
               <div className="flex items-start gap-3">

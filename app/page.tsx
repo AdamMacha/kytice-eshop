@@ -1,4 +1,5 @@
 import React from "react";
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { db } from "@/lib/db";
@@ -6,6 +7,7 @@ import { formatCZKFromWhole } from "@/lib/format";
 import { ProductGrid } from "@/components/product/product-grid";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/lib/constants";
+import { FaqSection } from "@/components/home/faq-section";
 import {
   Sparkles,
   Heart,
@@ -16,6 +18,21 @@ import {
   Wine,
   Star,
 } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Originální sladké kytice a dárkové boxy s alkoholem",
+  description:
+    "Ručně tvořené sladké kytice a dárkové boxy z prémiové čokolády a vybraného alkoholu. Osobní rozvoz po Praze zdarma a doručení po celé ČR přes Zásilkovnu.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "MoodBox Bloom | Originální sladké kytice a dárkové boxy s alkoholem",
+    description:
+      "Ručně vázané kytice z čokolády a prémiového alkoholu. Vyberte si dokonalý dárek k narozeninám, výročí i pro radost. Rozvoz po Praze zdarma.",
+    url: "/",
+  },
+};
 
 export default async function Home() {
   const [products, storeSetting] = await Promise.all([
@@ -114,7 +131,7 @@ export default async function Home() {
                 <div className="relative aspect-4/5 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/80 bg-white">
                   <Image
                     src={heroImage}
-                    alt="Kytice MoodBox"
+                    alt={`${heroTitle} – ručně tvořená sladká kytice s prémiovou čokoládou a alkoholem`}
                     fill
                     priority
                     className="object-cover"
@@ -226,7 +243,7 @@ export default async function Home() {
           <div className="lg:col-span-5 relative aspect-square rounded-3xl overflow-hidden bg-[#F3E7DF]">
             <Image
               src="/products/golden-elegance.png"
-              alt="Kateřina MoodBox tvorba"
+              alt="Kateřina Janovská – ruční výroba sladkých kytic MoodBox Bloom"
               fill
               className="object-cover"
             />
@@ -324,6 +341,9 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* ─── Frequently Asked Questions (FAQ) Section ────────────── */}
+      <FaqSection />
 
       {/* ─── Reviews / Love ────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

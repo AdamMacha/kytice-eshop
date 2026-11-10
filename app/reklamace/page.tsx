@@ -9,6 +9,15 @@ export const metadata: Metadata = {
   title: "Reklamace a vrácení zboží",
   description:
     "Postup při uplatnění reklamace a informace o možnostech vrácení zboží v e-shopu MoodBox Bloom.",
+  alternates: {
+    canonical: "/reklamace",
+  },
+  openGraph: {
+    title: "Reklamace a vrácení zboží | MoodBox Bloom",
+    description:
+      "Postup při uplatnění reklamace a informace o možnostech vrácení zboží v e-shopu MoodBox Bloom.",
+    url: "/reklamace",
+  },
 };
 
 export default function ComplaintsPage() {

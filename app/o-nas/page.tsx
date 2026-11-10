@@ -4,14 +4,23 @@ import Image from "next/image";
 import Link from "next/link";
 import { ROUTES } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
-import { Heart, Sparkles, Gift, ArrowRight } from "lucide-react";
-
+import { Heart, Sparkles, ArrowRight } from "lucide-react";
 import { db } from "@/lib/db";
+import { getBreadcrumbSchema } from "@/lib/schema";
 
 export const metadata: Metadata = {
-  title: "O nás – Příběh MoodBox Bloom",
+  title: "Náš příběh a ruční tvorba",
   description:
-    "MoodBox Bloom vznikl z lásky k tvoření a radosti z dárků, které mají smysl. Ručně tvořené sladké kytice od Kateřiny.",
+    "Poznejte příběh značky MoodBox Bloom. Ručně vázané sladké kytice a dárkové boxy s prémiovou čokoládou a alkoholem od Kateřiny Janovské.",
+  alternates: {
+    canonical: "/o-nas",
+  },
+  openGraph: {
+    title: "Náš příběh a ruční tvorba | MoodBox Bloom",
+    description:
+      "MoodBox Bloom vznikl z lásky k tvoření a radosti z dárků, které mají smysl. Každou sladkou kytici tvoříme ručně jako originál.",
+    url: "/o-nas",
+  },
 };
 
 export default async function AboutPage() {
@@ -20,8 +29,21 @@ export default async function AboutPage() {
   });
   const aboutImage = storeSetting?.aboutImage || "/products/pink-edition.png";
 
+  const breadcrumbsSchema = getBreadcrumbSchema([
+    { name: "Domů", url: "/" },
+    { name: "O nás", url: "/o-nas" },
+  ]);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-16">
+      {/* Schema.org BreadcrumbList */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbsSchema),
+        }}
+      />
+
       {/* Intro Header */}
       <div className="text-center max-w-2xl mx-auto space-y-4">
         <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white border border-[#E8D9CE] text-xs font-semibold text-[#A87938]">
@@ -44,7 +66,7 @@ export default async function AboutPage() {
           <div className="relative aspect-4/5 rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-[#F3E7DF]">
             <Image
               src={aboutImage}
-              alt="Kateřina tvoří kytice MoodBox"
+              alt="Kateřina Janovská – zakladatelka a tvůrkyně značky MoodBox Bloom"
               fill
               className="object-cover"
             />

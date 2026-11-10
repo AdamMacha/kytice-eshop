@@ -4,9 +4,18 @@ import { BRAND } from "@/lib/constants";
 import { ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Ochrana osobních údajů (GDPR)",
+  title: "Zásady ochrany osobních údajů (GDPR)",
   description:
-    "Zásady zpracování a ochrany osobních údajů v e-shopu MoodBox Bloom.",
+    "Informace o zpracování a ochraně osobních údajů zákazníků v e-shopu MoodBox Bloom podle GDPR.",
+  alternates: {
+    canonical: "/ochrana-udaju",
+  },
+  openGraph: {
+    title: "Zásady ochrany osobních údajů (GDPR) | MoodBox Bloom",
+    description:
+      "Informace o zpracování a ochraně osobních údajů zákazníků v e-shopu MoodBox Bloom podle GDPR.",
+    url: "/ochrana-udaju",
+  },
 };
 
 export default function PrivacyPage() {
